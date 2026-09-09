@@ -1,0 +1,24 @@
+{
+  "name": "drill4j-ecommerce-demo-e2e",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Playwright E2E tests for the Drill4J ecommerce demo (web UI).",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test --project=default",
+    "test:headed": "playwright test --headed --project=default",
+    "test:ui": "playwright test --ui --project=default",
+    "report": "playwright show-report",
+    "install:browsers": "playwright install chromium",
+    "install:browsers:ci": "playwright install --with-deps chromium",
+    "test:local": "cross-env E2E_COMPOSE_FILE=../../docker/ecommerce/docker-compose.yml E2E_COMPOSE_PROJECT=ecommerce E2E_BASE_URL=http://localhost playwright test --project=default"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.54.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^17.4.2"
+  },
+  "dependencies": {
+    "@types/node": "^25.7.0"
+  }
+}

@@ -1,0 +1,14 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'ecommerce-backend-automation'
+
+includeBuild('../../example_app/backend') {
+    dependencySubstitution {
+        substitute module('com.example.ecommerce:example-ecommerce-backend') using project(':')
+    }
+}

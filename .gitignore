@@ -1,0 +1,36 @@
+.vscode/
+
+automation/.gradle/
+automation/build/
+automation/bin/
+
+# IntelliJ / JetBrains IDEs
+**/.idea/
+*.iml
+
+**/.gradle/
+
+**/build/
+
+.env
+
+logs/
+screenshots/
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+!*.tfvars.example
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# AI
+CLAUDE.md

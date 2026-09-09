@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
+    id 'com.epam.drill.integration.cicd' version '0.10.0'
+}
+
+group = 'com.example.ecommerce'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// Thin JAR for automation tests (composite build) and library-style consumers.
+tasks.named('jar') {
+    enabled = true
+    archiveClassifier = 'plain'
+}
+tasks.named('bootJar') {
+    archiveClassifier = 'boot'
+}
+
+// Set DRILL_ENABLED=true env variable to enable Drill4J CI/CD coverage/testTracing.
+drill {
+    apiUrl = System.getenv('DRILL_API_URL') ?: 'http://localhost:8090/api'
+    apiKey = System.getenv('DRILL_API_KEY') ?: '2_39d44744f60b65a7e0c4355a49938b9a2d30f48ec0e862e53cae86e356e9331b'
+    groupId = 'ecommerce'
+    appId = 'backend'
+    packagePrefixes = ['com/example/ecommerce']
+
+    agent {
+        version = '0.10.1-fix.1'
+        agentMode = 'JAVA'
+    }
+
+    def drillEnabled = System.getenv('DRILL_ENABLED') == 'true'
+    if (drillEnabled) {
+        coverage()
+        testTracing()
+    }
+}

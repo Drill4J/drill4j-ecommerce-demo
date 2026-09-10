@@ -6,6 +6,7 @@ import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.ShippingInfo;
 import com.example.ecommerce.web.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Tag("unit")
 class OrderServiceTest {
 
     private static final String USER_ID = "u-1";

@@ -32,5 +32,28 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    description = 'Runs all tests (unit + API)'
+}
+
+tasks.register('unitTest', Test) {
+    group = 'verification'
+    description = 'Runs unit tests only (@Tag("unit"))'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'unit'
+    }
+    shouldRunAfter tasks.named('testClasses')
+}
+
+tasks.register('apiTest', Test) {
+    group = 'verification'
+    description = 'Runs API tests only (@Tag("api"))'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'api'
+    }
+    shouldRunAfter tasks.named('testClasses')
 }
 

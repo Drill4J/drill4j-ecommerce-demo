@@ -10,8 +10,8 @@ Every track should include (where the change applies) these three layers against
 
 | Type | Where | Role |
 |------|--------|------|
-| **Unit** | `example_app/backend/src/test` or `example_app/auth/src/test` | Service/domain logic in isolation |
-| **API** | `automation/api` (WebMvc / integration) | HTTP contracts, status codes, auth wiring |
+| **Unit** | `example_app/backend` or `example_app/auth` — `@Tag("unit")`; run `gradle unitTest` | Service/domain logic in isolation |
+| **API** | Same modules — `@Tag("api")`; run `gradle apiTest` | HTTP contracts, status codes (`@WebMvcTest` / integration) |
 | **E2E** | `automation/e2e` (Playwright) | Full UI path through frontend → auth/backend |
 
 For each track, **Cover** is what that layer should assert; **Gap** is left untested on purpose (Drill4J signal).

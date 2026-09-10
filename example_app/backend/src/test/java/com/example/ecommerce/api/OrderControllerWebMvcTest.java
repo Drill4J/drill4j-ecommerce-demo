@@ -7,6 +7,7 @@ import com.example.ecommerce.domain.Order;
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.ShippingInfo;
 import com.example.ecommerce.service.OrderService;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(OrderController.class)
+@Tag("api")
 class OrderControllerWebMvcTest {
 
     private static final AuthPrincipal PRINCIPAL = new AuthPrincipal("u-1", "user@example.com");

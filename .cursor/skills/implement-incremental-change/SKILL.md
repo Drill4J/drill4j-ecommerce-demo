@@ -32,9 +32,9 @@ Repo root: `drill4j-ecommerce-demo`.
 | Ecommerce backend | `example_app/backend` |
 | Auth | `example_app/auth` |
 | Web UI | `example_app/frontend` |
-| Unit tests | `example_app/backend/src/test` and/or `example_app/auth/src/test` |
-| API tests | `automation/api` |
-| E2E tests | `automation/e2e` |
+| Unit tests | Same module `src/test`, `@Tag("unit")` — `gradle unitTest` |
+| API tests | Same module `src/test`, `@Tag("api")` — `gradle apiTest` (**not** under `automation/`) |
+| E2E tests | `automation/e2e` only |
 
 Touch **only** components listed under **Touches** for that `Cn` (plus tests). Skip mobile unless the track explicitly requires it.
 
@@ -61,10 +61,10 @@ Update docs when the feature lands:
 
 | Layer | Location | What to add |
 |-------|----------|-------------|
-| Unit | backend and/or auth `src/test` | Only **Unit → Cover** |
-| API | `automation/api` | Only **API → Cover** |
+| Unit | touched module `src/test` (service/domain) | Only **Unit → Cover** |
+| API | same touched module `src/test` (api/WebMvc/integration) | Only **API → Cover** |
 
-Do **not** add E2E in this phase.
+Do **not** add E2E in this phase. Do **not** put unit/API tests under `automation/`.
 
 ### A3. First verification (must all pass before commit)
 
@@ -88,9 +88,9 @@ Smoke-launch as needed to confirm startup (e.g. `gradle bootRun` for auth/backen
 **4.3** All **newly implemented** unit and API tests must pass:
 
 ```bash
-cd example_app/backend && gradle test   # if backend unit tests added/changed
-cd example_app/auth && gradle test      # if auth unit tests added/changed
-cd automation/api && gradle test       # API tests
+cd example_app/backend && gradle unitTest && gradle apiTest   # if backend touched
+cd example_app/auth && gradle unitTest && gradle apiTest      # if auth touched
+# or: gradle test  (runs both)
 ```
 
 **4.4** Only **planned** unit and API tests for this `Cn` were implemented (diff review vs Cover/Gap). Remove any accidental Gap coverage.

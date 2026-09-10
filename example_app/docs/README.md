@@ -11,6 +11,8 @@ This folder contains implementation and usage documentation for the example e-co
 
 ## App structure
 
-- `example_app/backend` - Java + Spring Boot API
+- `example_app/backend` - Java + Spring Boot API (unit + API tests under `src/test`)
+- `example_app/auth` - Java + Spring Boot JWT auth (unit + API tests under `src/test`)
 - `example_app/frontend` - React web app
 - `example_app/mobile` - React Native (Expo) app for iOS/Android
+- `automation/e2e` - Playwright E2E tests

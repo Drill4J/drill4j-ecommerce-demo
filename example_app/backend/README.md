@@ -33,10 +33,14 @@ API base URL: `http://localhost:8080/api/v1`
 
 ## Test
 
+Unit and API tests live under `src/test`, tagged with `@Tag("unit")` / `@Tag("api")`.
+
 From `example_app/backend`:
 
 ```bash
-gradle test
+gradle unitTest   # unit only
+gradle apiTest    # API only (WebMvc / integration)
+gradle test       # all
 ```
 
 ## Main Endpoints

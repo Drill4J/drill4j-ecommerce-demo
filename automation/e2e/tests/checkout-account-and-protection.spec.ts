@@ -1,14 +1,16 @@
-import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from '#drill4j-integration';
 import {
   addFirstProductToBasketFromList,
   createUniqueUser,
   openBasket,
+  PROCESSING_ORDER_MAX_TIMEOUT,
   signOutViaHeader,
-  signUp,
-  PROCESSING_ORDER_MAX_TIMEOUT
+  signUp
 } from './helpers';
 
-async function placeOrderViaUi(page: import('@playwright/test').Page, shipping: {
+async function placeOrderViaUi(page: Page, shipping: {
   fullName: string;
   phoneNumber: string;
   addressLine: string;
@@ -27,7 +29,7 @@ async function placeOrderViaUi(page: import('@playwright/test').Page, shipping: 
   await page.getByRole('button', { name: 'Continue to payment' }).click();
 
   await page.getByRole('button', { name: 'Continue to review' }).click();
-  const placeOrderButton = page.getByRole('button', {name: 'Place order'});
+  const placeOrderButton = page.getByRole('button', { name: 'Place order' });
   await placeOrderButton.click();
   await expect(placeOrderButton).toBeHidden();
   await expect(page.locator('.order-loading-overlay')).toBeHidden({ timeout: PROCESSING_ORDER_MAX_TIMEOUT });
@@ -74,7 +76,7 @@ test.describe('Checkout, account, and access rules', () => {
     await expect(page.getByText(/Total:/)).toBeVisible();
 
     // E2E-013 Place order + confirmation
-    const placeOrderButton = page.getByRole('button', {name: 'Place order'});
+    const placeOrderButton = page.getByRole('button', { name: 'Place order' });
     await placeOrderButton.click();
     await expect(placeOrderButton).toBeHidden();
     await expect(page.locator('.order-loading-overlay')).toBeHidden({ timeout: PROCESSING_ORDER_MAX_TIMEOUT });

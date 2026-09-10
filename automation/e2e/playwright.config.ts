@@ -3,7 +3,9 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-dotenv.config({ path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '.env') });
+const e2eDir = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(e2eDir, '.env') });
+dotenv.config({ path: path.resolve(e2eDir, '../../docker/ecommerce/.env') });
 
 export default defineConfig({
   testDir: './tests',

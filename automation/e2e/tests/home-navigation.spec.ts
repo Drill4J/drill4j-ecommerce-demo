@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from '#drill4j-integration';
 import { openBasket } from './helpers';
 
 test.describe('Home & navigation', () => {
@@ -13,7 +14,7 @@ test.describe('Home & navigation', () => {
     await expect(page.getByRole('heading', { name: 'Featured products' })).toBeVisible();
 
     const featuredCards = page.locator('article.product-card');
-    await expect(featuredCards).toHaveCount(4);
+    await expect(featuredCards).toHaveCount(8);
 
     await page.getByRole('link', { name: 'Products', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible();

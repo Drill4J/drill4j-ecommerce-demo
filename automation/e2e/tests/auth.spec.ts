@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from '#drill4j-integration';
 import { createUniqueUser, signIn, signOutViaHeader, signUp } from './helpers';
 
 test.describe('Authentication', () => {

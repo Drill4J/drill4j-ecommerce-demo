@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from '#drill4j-integration';
 import {
   addFirstProductToBasketFromList,
   createUniqueUser,

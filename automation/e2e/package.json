@@ -18,6 +18,9 @@
     "cross-env": "^7.0.3",
     "dotenv": "^17.4.2"
   },
+  "imports": {
+    "#drill4j-integration": "./drill4j-integration.js"
+  },
   "dependencies": {
     "@types/node": "^25.7.0"
   }

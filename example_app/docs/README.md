@@ -7,6 +7,7 @@ This folder contains implementation and usage documentation for the example e-co
 - [Setup guide](setup-guide.md)
 - [API reference](api-reference.md)
 - [User flows](user-flows.md)
+- [Incremental changes](incremental-changes.md) (feature + partial-test build order)
 
 ## App structure
 

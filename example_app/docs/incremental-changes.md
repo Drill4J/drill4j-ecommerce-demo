@@ -90,7 +90,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** [8) Delivery fee by destination](user-flows.md#8-delivery-fee-by-destination)
 - **Touches:** backend, frontend
-- **Status:** feature+unit+api done
+- **Status:** done
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|

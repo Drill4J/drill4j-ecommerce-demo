@@ -186,4 +186,24 @@ test.describe('Checkout, account, and access rules', () => {
     await expect(page.locator('.order-loading-overlay')).toBeHidden({ timeout: PROCESSING_ORDER_MAX_TIMEOUT });
     await expect(page.getByRole('heading', { name: 'Order confirmed' })).toBeVisible();
   });
+
+  test('C5 Checkout review shows Austin delivery fee', async ({ page }, testInfo) => {
+    const user = createUniqueUser(testInfo);
+    await signUp(page, user);
+
+    await addFirstProductToBasketFromList(page);
+    await openBasket(page);
+    await page.getByRole('button', { name: 'Proceed to checkout' }).click();
+
+    await page.getByLabel('Full name').fill('C5 Fee Buyer');
+    await page.getByLabel('Phone number').fill('+1-555-500-500');
+    await page.getByLabel('Address line').fill('Fee Blvd 5');
+    await page.getByLabel('City').fill('Austin');
+    await page.getByLabel('Postal code').fill('73301');
+    await page.getByRole('button', { name: 'Continue to payment' }).click();
+    await page.getByRole('button', { name: 'Continue to review' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Review your order' })).toBeVisible();
+    await expect(page.getByText(/Delivery fee:\s*\$5\.00/)).toBeVisible();
+  });
 });

@@ -34,3 +34,7 @@ terraform.rc
 
 # AI
 CLAUDE.md
+# Local history replay artifacts
+.replay-worktree/
+.replay-compose.override.yml
+scripts/logs/

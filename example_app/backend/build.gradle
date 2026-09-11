@@ -25,6 +25,34 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+// Report to Drill Admin only from a clean git work tree (committed HEAD).
+// Dirty trees keep unit/api runnable locally but do not attach the CI/CD agent
+// (coverage + testTracing both off → plugin skips agent injection).
+// Override: DRILL_REPORT_ENABLED=true|false|1|0 (used by scripts/replay-history.sh).
+ext.drillReportEnabled = {
+    def force = System.getenv('DRILL_REPORT_ENABLED')
+    if (force != null) {
+        return force.equalsIgnoreCase('true') || force == '1'
+    }
+    def dir = project.projectDir
+    while (dir != null) {
+        if (new File(dir, '.git').exists()) {
+            break
+        }
+        dir = dir.parentFile
+    }
+    if (dir == null) {
+        return false
+    }
+    def proc = new ProcessBuilder('git', 'status', '--porcelain')
+            .directory(dir)
+            .redirectErrorStream(true)
+            .start()
+    def out = proc.inputStream.text.trim()
+    def code = proc.waitFor()
+    return code == 0 && out.isEmpty()
+}()
+
 tasks.named('test') {
     useJUnitPlatform()
     description = 'Runs all tests (unit + API)'
@@ -45,9 +73,9 @@ tasks.register('unitTest', Test) {
     }
     shouldRunAfter tasks.named('testClasses')
     drill {
-        coverage { enabled = true }
+        coverage { enabled = drillReportEnabled }
         testTracing {
-            enabled = true
+            enabled = drillReportEnabled
             perTestSession = true
             perTestLaunch = false
         }
@@ -64,9 +92,9 @@ tasks.register('apiTest', Test) {
     }
     shouldRunAfter tasks.named('testClasses')
     drill {
-        coverage { enabled = true }
+        coverage { enabled = drillReportEnabled }
         testTracing {
-            enabled = true
+            enabled = drillReportEnabled
             perTestSession = true
             perTestLaunch = true
         }

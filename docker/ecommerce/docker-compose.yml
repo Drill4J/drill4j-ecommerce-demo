@@ -17,7 +17,10 @@ services:
       DRILL_GROUP_ID: ${DRILL_GROUP_ID:-ecommerce}
       DRILL_APP_ID: auth
       DRILL_PACKAGE_PREFIXES: com/example/auth
-      DRILL_BUILD_VERSION: 0.1.0
+      # App-agent environment label (VCS metadata is not sent by the compose agent).
+      DRILL_ENV_ID: ${DRILL_ENV_ID:-${DRILL_ENV_ID_AUTH:-local}}
+      # Must match example_app/auth/build.gradle version at the checked-out commit (replay sets this).
+      DRILL_BUILD_VERSION: ${DRILL_BUILD_VERSION_AUTH:-${DRILL_BUILD_VERSION:-0.1.0}}
     volumes:
       - agent-files:/data
     extra_hosts:
@@ -53,7 +56,10 @@ services:
       DRILL_GROUP_ID: ${DRILL_GROUP_ID:-ecommerce}
       DRILL_APP_ID: backend
       DRILL_PACKAGE_PREFIXES: com/example/ecommerce
-      DRILL_BUILD_VERSION: 0.1.0
+      # App-agent environment label (VCS metadata is not sent by the compose agent).
+      DRILL_ENV_ID: ${DRILL_ENV_ID:-${DRILL_ENV_ID_BACKEND:-local}}
+      # Must match example_app/backend/build.gradle version at the checked-out commit (replay sets this).
+      DRILL_BUILD_VERSION: ${DRILL_BUILD_VERSION_BACKEND:-${DRILL_BUILD_VERSION:-0.1.0}}
 
     volumes:
       - agent-files:/data

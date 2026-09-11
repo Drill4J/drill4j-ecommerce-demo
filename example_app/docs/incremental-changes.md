@@ -42,7 +42,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** [5) Filter catalog by category](user-flows.md#5-filter-catalog-by-category)
 - **Touches:** backend, frontend
-- **Status:** feature+unit+api done
+- **Status:** done
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|

@@ -84,4 +84,21 @@ test.describe('Products & basket', () => {
     await page.getByRole('button', { name: 'Remove' }).click();
     await expect(page.getByText('Your basket is empty.')).toBeVisible();
   });
+
+  test('C1 Select category filter updates product list', async ({ page }) => {
+    await page.goto('/products');
+    await expect(page.getByRole('heading', { name: 'Products' })).toBeVisible();
+    await expect(page.locator('article.product-card').first()).toBeVisible();
+
+    await page.getByRole('button', { name: 'Gaming', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Gaming', exact: true })).toHaveAttribute('aria-pressed', 'true');
+
+    const cards = page.locator('article.product-card');
+    await expect(cards.first()).toBeVisible();
+    const count = await cards.count();
+    expect(count).toBeGreaterThan(0);
+    for (let i = 0; i < count; i++) {
+      await expect(cards.nth(i)).toContainText('Gaming');
+    }
+  });
 });

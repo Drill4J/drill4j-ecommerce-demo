@@ -142,5 +142,18 @@ test.describe('Checkout, account, and access rules', () => {
     await expect(page).toHaveURL(/\/signin$/);
     await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
   });
+
+  test('C3 Checkout with in-stock basket places COD order', async ({ page }, testInfo) => {
+    const user = createUniqueUser(testInfo);
+    await signUp(page, user);
+    await placeOrderViaUi(page, {
+      fullName: 'C3 Buyer',
+      phoneNumber: '+1-555-300-300',
+      addressLine: 'Stock St 3',
+      city: 'Austin',
+      postalCode: '73301',
+    });
+    await expect(page.getByText(/PLACED_COD|Cash on Delivery|CASH_ON_DELIVERY/i).first()).toBeVisible();
+  });
 });
 

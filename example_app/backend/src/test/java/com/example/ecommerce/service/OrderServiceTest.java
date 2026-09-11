@@ -51,11 +51,11 @@ class OrderServiceTest {
     }
 
     @Test
-    void placeOrderShouldStoreOrderAndClearBasket() {
+    void placeOrderShouldSucceedWhenAllLinesInStock() {
         ShippingInfo shippingInfo = shippingInfo();
         List<BasketItem> items = List.of(
-                new BasketItem(product("p-1001", "24.99"), 1),
-                new BasketItem(product("p-1002", "79.00"), 1)
+                new BasketItem(product("p-1001", "24.99", true), 1),
+                new BasketItem(product("p-1002", "79.00", true), 1)
         );
         when(basketService.snapshotItems(USER_ID)).thenReturn(items);
         when(basketService.calculateSubtotal(USER_ID)).thenReturn(new BigDecimal("103.99"));
@@ -80,6 +80,10 @@ class OrderServiceTest {
     }
 
     private static Product product(String id, String price) {
+        return product(id, price, true);
+    }
+
+    private static Product product(String id, String price, boolean inStock) {
         return new Product(
                 id,
                 "Product " + id,
@@ -87,7 +91,7 @@ class OrderServiceTest {
                 new BigDecimal(price),
                 "image-url",
                 "Category",
-                true
+                inStock
         );
     }
 

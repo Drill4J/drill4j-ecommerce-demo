@@ -3,6 +3,7 @@ package com.example.ecommerce.service;
 import com.example.ecommerce.domain.BasketItem;
 import com.example.ecommerce.domain.Order;
 import com.example.ecommerce.domain.ShippingInfo;
+import com.example.ecommerce.web.BadRequestException;
 import com.example.ecommerce.web.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,11 @@ public class OrderService {
     public Order placeOrder(String userId, ShippingInfo shippingInfo) {
         basketService.ensureNotEmpty(userId);
         List<BasketItem> items = basketService.snapshotItems(userId);
+        for (BasketItem item : items) {
+            if (!item.product().inStock()) {
+                throw new BadRequestException("Product is out of stock: " + item.product().id());
+            }
+        }
         BigDecimal totalAmount = basketService.calculateSubtotal(userId);
         String orderId = UUID.randomUUID().toString();
         Order order = new Order(

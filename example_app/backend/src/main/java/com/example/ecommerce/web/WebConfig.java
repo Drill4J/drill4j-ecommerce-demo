@@ -35,7 +35,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns(
                         "/api/v1/basket/**",
                         "/api/v1/checkout/**",
-                        "/api/v1/orders/**"
+                        "/api/v1/orders/**",
+                        "/api/v1/addresses/**"
                 );
     }
 }

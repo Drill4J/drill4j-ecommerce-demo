@@ -2,6 +2,8 @@ package com.example.ecommerce.api;
 
 import com.example.ecommerce.auth.AuthClient;
 import com.example.ecommerce.auth.AuthPrincipal;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ class OrderFlowIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockBean
     private AuthClient authClient;
@@ -159,6 +164,65 @@ class OrderFlowIntegrationTest {
                 .andExpect(jsonPath("$.shippingInfo.city").value("Austin"))
                 .andExpect(jsonPath("$.deliveryFee").value(5.00))
                 .andExpect(jsonPath("$.totalAmount").value(54.98));
+    }
+
+    @Test
+    void shouldCreateListAndPlaceOrderUsingSavedAddress() throws Exception {
+        AuthPrincipal addressUser = new AuthPrincipal("u-addr", "addr@example.com");
+        when(authClient.verify(anyString())).thenReturn(addressUser);
+
+        String createResponse = mockMvc.perform(post("/api/v1/addresses")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "fullName": "Jane Doe",
+                                  "phoneNumber": "+1-555-100-100",
+                                  "addressLine": "Main street 10",
+                                  "city": "Austin",
+                                  "postalCode": "73301",
+                                  "isDefault": true
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.city").value("Austin"))
+                .andExpect(jsonPath("$.isDefault").value(true))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        JsonNode created = objectMapper.readTree(createResponse);
+        String addressId = created.get("id").asText();
+
+        mockMvc.perform(get("/api/v1/addresses")
+                        .header("Authorization", "Bearer test"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(addressId))
+                .andExpect(jsonPath("$[0].fullName").value("Jane Doe"));
+
+        mockMvc.perform(post("/api/v1/basket/items")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "productId": "p-1001",
+                                  "quantity": 1
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/v1/orders")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "addressId": "%s"
+                                }
+                                """.formatted(addressId)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("PLACED_COD"))
+                .andExpect(jsonPath("$.shippingInfo.city").value("Austin"))
+                .andExpect(jsonPath("$.shippingInfo.fullName").value("Jane Doe"));
     }
 
     @Test

@@ -1,4 +1,4 @@
-import type {Basket, CheckoutPreview, Order, PageParams, Product, ShippingInfo} from './types'
+import type {Basket, CheckoutPreview, Order, PageParams, Product, SavedAddress, ShippingInfo} from './types'
 import { getCookie } from './auth/cookies'
 
 // In production (nginx), the UI must call same-origin:
@@ -114,24 +114,50 @@ export async function removeBasketItem(productId: string): Promise<Basket> {
   return getBasket()
 }
 
-export function checkoutPreview(shippingInfo: ShippingInfo, promoCode?: string): Promise<CheckoutPreview> {
+export function checkoutPreview(
+  shippingInfo?: ShippingInfo,
+  promoCode?: string,
+  addressId?: string,
+): Promise<CheckoutPreview> {
   return fetchJson<CheckoutPreview>('/checkout/preview', {
     method: 'POST',
     includeAuth: true,
     body: JSON.stringify({
-      shippingInfo,
+      ...(addressId ? { addressId } : { shippingInfo }),
       ...(promoCode && promoCode.trim() ? { promoCode: promoCode.trim() } : {}),
     }),
   })
 }
 
-export function placeOrder(shippingInfo: ShippingInfo, promoCode?: string): Promise<Order> {
+export function placeOrder(
+  shippingInfo?: ShippingInfo,
+  promoCode?: string,
+  addressId?: string,
+): Promise<Order> {
   return fetchJson<Order>('/orders', {
     method: 'POST',
     includeAuth: true,
     body: JSON.stringify({
-      shippingInfo,
+      ...(addressId ? { addressId } : { shippingInfo }),
       ...(promoCode && promoCode.trim() ? { promoCode: promoCode.trim() } : {}),
+    }),
+  })
+}
+
+export function getAddresses(): Promise<SavedAddress[]> {
+  return fetchJson<SavedAddress[]>('/addresses', { includeAuth: true })
+}
+
+export function createAddress(
+  shippingInfo: ShippingInfo,
+  isDefault?: boolean,
+): Promise<SavedAddress> {
+  return fetchJson<SavedAddress>('/addresses', {
+    method: 'POST',
+    includeAuth: true,
+    body: JSON.stringify({
+      ...shippingInfo,
+      ...(isDefault != null ? { isDefault } : {}),
     }),
   })
 }

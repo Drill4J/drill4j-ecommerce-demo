@@ -10,8 +10,11 @@ import com.example.ecommerce.auth.AuthPrincipal;
 import com.example.ecommerce.auth.AuthRequestAttributes;
 import com.example.ecommerce.domain.BasketItem;
 import com.example.ecommerce.domain.Order;
+import com.example.ecommerce.domain.SavedAddress;
 import com.example.ecommerce.domain.ShippingInfo;
+import com.example.ecommerce.service.AddressService;
 import com.example.ecommerce.service.OrderService;
+import com.example.ecommerce.web.BadRequestException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +34,11 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final AddressService addressService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, AddressService addressService) {
         this.orderService = orderService;
+        this.addressService = addressService;
     }
 
     @PostMapping("/checkout/preview")
@@ -41,13 +46,18 @@ public class OrderController {
             @RequestAttribute(AuthRequestAttributes.PRINCIPAL) AuthPrincipal principal,
             @Valid @RequestBody CheckoutPreviewRequest request
     ) {
+        ShippingInfo shippingInfo = resolveShipping(
+                principal.userId(),
+                request.addressId(),
+                request.shippingInfo()
+        );
         Order previewOrder = orderService.previewOrder(
                 principal.userId(),
-                toShippingInfo(request.shippingInfo()),
+                shippingInfo,
                 request.promoCode()
         );
         return new CheckoutPreviewResponse(
-                request.shippingInfo(),
+                toShippingInfoRequest(previewOrder.shippingInfo()),
                 toBasketItemResponses(previewOrder.items()),
                 previewOrder.totalAmount(),
                 previewOrder.paymentMethod(),
@@ -63,9 +73,14 @@ public class OrderController {
             @RequestAttribute(AuthRequestAttributes.PRINCIPAL) AuthPrincipal principal,
             @Valid @RequestBody PlaceOrderRequest request
     ) {
+        ShippingInfo shippingInfo = resolveShipping(
+                principal.userId(),
+                request.addressId(),
+                request.shippingInfo()
+        );
         Order order = orderService.placeOrder(
                 principal.userId(),
-                toShippingInfo(request.shippingInfo()),
+                shippingInfo,
                 request.promoCode()
         );
         return toOrderResponse(order);
@@ -84,6 +99,17 @@ public class OrderController {
             @PathVariable String orderId
     ) {
         return toOrderResponse(orderService.getOrder(principal.userId(), orderId));
+    }
+
+    private ShippingInfo resolveShipping(String userId, String addressId, ShippingInfoRequest shippingInfo) {
+        if (addressId != null && !addressId.isBlank()) {
+            SavedAddress saved = addressService.get(userId, addressId);
+            return toShippingInfo(saved);
+        }
+        if (shippingInfo == null) {
+            throw new BadRequestException("Either addressId or shippingInfo is required");
+        }
+        return toShippingInfo(shippingInfo);
     }
 
     private static OrderResponse toOrderResponse(Order order) {
@@ -119,6 +145,16 @@ public class OrderController {
                 request.addressLine(),
                 request.city(),
                 request.postalCode()
+        );
+    }
+
+    private static ShippingInfo toShippingInfo(SavedAddress address) {
+        return new ShippingInfo(
+                address.fullName(),
+                address.phoneNumber(),
+                address.addressLine(),
+                address.city(),
+                address.postalCode()
         );
     }
 

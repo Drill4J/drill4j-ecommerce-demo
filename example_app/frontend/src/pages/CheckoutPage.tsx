@@ -1,8 +1,8 @@
 import { FormEvent, useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { checkoutPreview, placeOrder } from '../api'
+import { checkoutPreview, createAddress, getAddresses, placeOrder } from '../api'
 import { useBasket } from '../context/BasketContext'
-import type { CheckoutPreview, ShippingInfo } from '../types'
+import type { CheckoutPreview, SavedAddress, ShippingInfo } from '../types'
 import { formatCurrency } from '../utils'
 
 const initialShippingInfo: ShippingInfo = {
@@ -36,6 +36,9 @@ export function CheckoutPage() {
   const { basket, refreshBasket } = useBasket()
   const [step, setStep] = useState<Step>(1)
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo>(initialShippingInfo)
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([])
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('')
+  const [saveAddressOnContinue, setSaveAddressOnContinue] = useState(false)
   const [preview, setPreview] = useState<CheckoutPreview | null>(null)
   const [promoCode, setPromoCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -49,15 +52,74 @@ export function CheckoutPage() {
       return Math.floor(Math.random() * (max - min + 1) + min)
   }
 
-  const handleShippingSubmit = (event: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    getAddresses()
+      .then((addresses) => {
+        setSavedAddresses(addresses)
+        const defaultAddress = addresses.find((address) => address.isDefault) ?? addresses[0]
+        if (defaultAddress) {
+          setSelectedAddressId(defaultAddress.id)
+          setShippingInfo({
+            fullName: defaultAddress.fullName,
+            phoneNumber: defaultAddress.phoneNumber,
+            addressLine: defaultAddress.addressLine,
+            city: defaultAddress.city,
+            postalCode: defaultAddress.postalCode,
+          })
+        }
+      })
+      .catch(() => {
+        // Keep manual entry available when addresses cannot be loaded.
+      })
+  }, [])
+
+  const applySavedAddress = (addressId: string) => {
+    setSelectedAddressId(addressId)
+    if (!addressId) {
+      return
+    }
+    const selected = savedAddresses.find((address) => address.id === addressId)
+    if (!selected) {
+      return
+    }
+    setShippingInfo({
+      fullName: selected.fullName,
+      phoneNumber: selected.phoneNumber,
+      addressLine: selected.addressLine,
+      city: selected.city,
+      postalCode: selected.postalCode,
+    })
+  }
+
+  const handleShippingFieldChange = (field: keyof ShippingInfo, value: string) => {
+    setSelectedAddressId('')
+    setShippingInfo({ ...shippingInfo, [field]: value })
+  }
+
+  const handleShippingSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setStep(2)
+    setError('')
+    try {
+      if (saveAddressOnContinue && !selectedAddressId) {
+        const created = await createAddress(shippingInfo, savedAddresses.length === 0)
+        setSavedAddresses((current) => [...current, created])
+        setSelectedAddressId(created.id)
+      }
+      setStep(2)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to save address'
+      setError(message)
+    }
   }
 
   const handlePaymentContinue = async () => {
     setError('')
     try {
-      const result = await checkoutPreview(shippingInfo, promoCode)
+      const result = await checkoutPreview(
+        selectedAddressId ? undefined : shippingInfo,
+        promoCode,
+        selectedAddressId || undefined,
+      )
       setPreview(result)
       setStep(3)
     } catch (err: unknown) {
@@ -69,7 +131,11 @@ export function CheckoutPage() {
   const handleApplyPromo = async () => {
     setError('')
     try {
-      const result = await checkoutPreview(shippingInfo, promoCode)
+      const result = await checkoutPreview(
+        selectedAddressId ? undefined : shippingInfo,
+        promoCode,
+        selectedAddressId || undefined,
+      )
       setPreview(result)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to apply promo code'
@@ -180,7 +246,11 @@ export function CheckoutPage() {
     try {
       // The "await" will block until processing will be finished.
       const [order] = await Promise.all([
-          placeOrder(shippingInfo, promoCode),
+          placeOrder(
+            selectedAddressId ? undefined : shippingInfo,
+            promoCode,
+            selectedAddressId || undefined,
+          ),
           delay(totalDuration)
       ])
       await refreshBasket()
@@ -215,15 +285,33 @@ export function CheckoutPage() {
       {error && <p className="error">{error}</p>}
 
       {step === 1 && (
-        <form className="card form" onSubmit={handleShippingSubmit}>
+        <form className="card form" onSubmit={(event) => void handleShippingSubmit(event)}>
           <h2>Shipping information</h2>
+          {savedAddresses.length > 0 && (
+            <label>
+              Saved address
+              <select
+                className="input"
+                value={selectedAddressId}
+                onChange={(event) => applySavedAddress(event.target.value)}
+              >
+                <option value="">Enter a new address</option>
+                {savedAddresses.map((address) => (
+                  <option key={address.id} value={address.id}>
+                    {address.fullName} — {address.addressLine}, {address.city}
+                    {address.isDefault ? ' (default)' : ''}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <label>
             Full name
             <input
               className="input"
               required
               value={shippingInfo.fullName}
-              onChange={(event) => setShippingInfo({ ...shippingInfo, fullName: event.target.value })}
+              onChange={(event) => handleShippingFieldChange('fullName', event.target.value)}
             />
           </label>
           <label>
@@ -232,7 +320,7 @@ export function CheckoutPage() {
               className="input"
               required
               value={shippingInfo.phoneNumber}
-              onChange={(event) => setShippingInfo({ ...shippingInfo, phoneNumber: event.target.value })}
+              onChange={(event) => handleShippingFieldChange('phoneNumber', event.target.value)}
             />
           </label>
           <label>
@@ -241,7 +329,7 @@ export function CheckoutPage() {
               className="input"
               required
               value={shippingInfo.addressLine}
-              onChange={(event) => setShippingInfo({ ...shippingInfo, addressLine: event.target.value })}
+              onChange={(event) => handleShippingFieldChange('addressLine', event.target.value)}
             />
           </label>
           <label>
@@ -250,7 +338,7 @@ export function CheckoutPage() {
               className="input"
               required
               value={shippingInfo.city}
-              onChange={(event) => setShippingInfo({ ...shippingInfo, city: event.target.value })}
+              onChange={(event) => handleShippingFieldChange('city', event.target.value)}
             />
           </label>
           <label>
@@ -259,9 +347,19 @@ export function CheckoutPage() {
               className="input"
               required
               value={shippingInfo.postalCode}
-              onChange={(event) => setShippingInfo({ ...shippingInfo, postalCode: event.target.value })}
+              onChange={(event) => handleShippingFieldChange('postalCode', event.target.value)}
             />
           </label>
+          {!selectedAddressId && (
+            <label className="row">
+              <input
+                type="checkbox"
+                checked={saveAddressOnContinue}
+                onChange={(event) => setSaveAddressOnContinue(event.target.checked)}
+              />
+              Save this address for later
+            </label>
+          )}
           <button className="button" type="submit">
             Continue to payment
           </button>

@@ -5,7 +5,9 @@ import com.example.ecommerce.auth.AuthPrincipal;
 import com.example.ecommerce.domain.BasketItem;
 import com.example.ecommerce.domain.Order;
 import com.example.ecommerce.domain.Product;
+import com.example.ecommerce.domain.SavedAddress;
 import com.example.ecommerce.domain.ShippingInfo;
+import com.example.ecommerce.service.AddressService;
 import com.example.ecommerce.service.OrderService;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,9 @@ class OrderControllerWebMvcTest {
 
     @MockBean
     private OrderService orderService;
+
+    @MockBean
+    private AddressService addressService;
 
     @MockBean
     private AuthClient authClient;
@@ -169,6 +174,51 @@ class OrderControllerWebMvcTest {
                 .andExpect(jsonPath("$.totalAmount").value(84.00))
                 .andExpect(jsonPath("$.paymentMethod").value("CASH_ON_DELIVERY"));
 
+        verify(orderService).placeOrder(PRINCIPAL.userId(), shippingInfo, null);
+    }
+
+    @Test
+    void placeOrderWithSavedAddressIdShouldResolveShippingAndPlace() throws Exception {
+        ShippingInfo shippingInfo = shippingInfo();
+        SavedAddress saved = new SavedAddress(
+                "addr-1",
+                shippingInfo.fullName(),
+                shippingInfo.phoneNumber(),
+                shippingInfo.addressLine(),
+                shippingInfo.city(),
+                shippingInfo.postalCode(),
+                true
+        );
+        List<BasketItem> items = List.of(new BasketItem(product("p-1002", "79.00"), 1));
+        Order placed = new Order(
+                "ord-addr",
+                OrderService.ORDER_STATUS_PLACED_COD,
+                shippingInfo,
+                items,
+                new BigDecimal("84.00"),
+                OrderService.PAYMENT_METHOD_COD,
+                null,
+                BigDecimal.ZERO,
+                new BigDecimal("5.00")
+        );
+        when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
+        when(addressService.get(PRINCIPAL.userId(), "addr-1")).thenReturn(saved);
+        when(orderService.placeOrder(anyString(), any(ShippingInfo.class), isNull())).thenReturn(placed);
+
+        mockMvc.perform(post("/api/v1/orders")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "addressId": "addr-1"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.orderId").value("ord-addr"))
+                .andExpect(jsonPath("$.shippingInfo.city").value("Austin"))
+                .andExpect(jsonPath("$.totalAmount").value(84.00));
+
+        verify(addressService).get(PRINCIPAL.userId(), "addr-1");
         verify(orderService).placeOrder(PRINCIPAL.userId(), shippingInfo, null);
     }
 

@@ -37,6 +37,11 @@ export type ShippingInfo = {
   postalCode: string
 }
 
+export type SavedAddress = ShippingInfo & {
+  id: string
+  isDefault: boolean
+}
+
 export type CheckoutPreview = {
   shippingInfo: ShippingInfo
   items: BasketItem[]

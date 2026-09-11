@@ -44,6 +44,10 @@ Touch **only** components listed under **Touches** for that `Cn` (plus tests). S
 - Do **not** implement tests for **Gap** rows (Drill4J demo signal).
 - Do not “be helpful” by adding extra negative/edge cases.
 
+### Hard rule: version bump
+
+For each incremental change `Cn`, bump **`version`** in every touched service `build.gradle` (`example_app/backend` and/or `example_app/auth`) by either a **minor** or **patch** increment (starting baseline `0.1.0`). Do not leave version unchanged across a track. Include the bump in the Phase A (feature + unit + API) commit.
+
 ---
 
 ## Phase A — Feature + unit + API (developer)
@@ -51,6 +55,8 @@ Touch **only** components listed under **Touches** for that `Cn` (plus tests). S
 ### A1. Implement product change
 
 Implement the feature across all affected components from **Touches** (backend and/or auth and/or frontend web UI) so the user flow works end-to-end for the **Cover** scenarios.
+
+Bump `version` (minor or patch) in each touched auth/backend `build.gradle`.
 
 Update docs when the feature lands:
 
@@ -162,6 +168,7 @@ Copy and update while running:
 Cn: _
 - [ ] Read incremental-changes + user flow
 - [ ] Phase A: feature (touched modules only)
+- [ ] Phase A: bump version (minor or patch) on touched auth/backend build.gradle
 - [ ] Phase A: unit Cover only
 - [ ] Phase A: API Cover only
 - [ ] 4.1 build/launch

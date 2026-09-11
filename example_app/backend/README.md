@@ -34,13 +34,15 @@ API base URL: `http://localhost:8080/api/v1`
 ## Test
 
 Unit and API tests live under `src/test`, tagged with `@Tag("unit")` / `@Tag("api")`.
+Drill4J CI/CD plugin `0.11.0` instruments `unitTest` / `apiTest` (Admin at `http://localhost:8090/api`; set `DRILL_API_KEY` like Playwright / `docker/ecommerce/.env`).
 
 From `example_app/backend`:
 
 ```bash
-gradle unitTest   # unit only
-gradle apiTest    # API only (WebMvc / integration)
-gradle test       # all
+export DRILL_API_KEY=...   # same key as E2E
+gradle unitTest   # unit only — session tracing on, per-test tracing off
+gradle apiTest    # API only — session + per-test tracing on
+gradle test       # all (no Drill agent on this combined task)
 ```
 
 ## Main Endpoints

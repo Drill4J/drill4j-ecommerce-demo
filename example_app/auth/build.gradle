@@ -2,10 +2,11 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.5'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'com.epam.drill.integration.cicd' version '0.11.0'
 }
 
 group = 'com.example.auth'
-version = '0.0.1-SNAPSHOT'
+version = '0.1.0'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -33,6 +34,11 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
     description = 'Runs all tests (unit + API)'
+    // Prefer gradle unitTest / apiTest for Drill4J-instrumented runs.
+    drill {
+        coverage { enabled = false }
+        testTracing { enabled = false }
+    }
 }
 
 tasks.register('unitTest', Test) {
@@ -44,6 +50,14 @@ tasks.register('unitTest', Test) {
         includeTags 'unit'
     }
     shouldRunAfter tasks.named('testClasses')
+    drill {
+        coverage { enabled = true }
+        testTracing {
+            enabled = true
+            perTestSession = true
+            perTestLaunch = false
+        }
+    }
 }
 
 tasks.register('apiTest', Test) {
@@ -55,5 +69,31 @@ tasks.register('apiTest', Test) {
         includeTags 'api'
     }
     shouldRunAfter tasks.named('testClasses')
+    drill {
+        coverage { enabled = true }
+        testTracing {
+            enabled = true
+            perTestSession = true
+            perTestLaunch = true
+        }
+    }
 }
 
+// Same Drill Admin host/port as E2E; API key from DRILL_API_KEY (same as Playwright).
+drill {
+    apiUrl = System.getenv('DRILL_API_URL') ?: 'http://localhost:8090/api'
+    apiKey = System.getenv('DRILL_API_KEY') ?: ''
+    groupId = System.getenv('DRILL_GROUP_ID') ?: 'ecommerce'
+    appId = 'auth'
+    packagePrefixes = ['com/example/auth']
+    buildVersion = version
+
+    agent {
+        version = '0.11.0'
+        agentMode = 'JAVA'
+    }
+
+    // Features enabled per unitTest / apiTest (see task-level drill {} overrides).
+    coverage()
+    testTracing()
+}

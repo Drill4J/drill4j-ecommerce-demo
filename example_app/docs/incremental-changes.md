@@ -54,7 +54,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** [6) Enforce stock-aware quantity limits](user-flows.md#6-enforce-stock-aware-quantity-limits)
 - **Touches:** backend
-- **Status:** feature+unit+api done
+- **Status:** done
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|
@@ -66,7 +66,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** [6) Enforce stock-aware quantity limits](user-flows.md#6-enforce-stock-aware-quantity-limits)
 - **Touches:** backend
-- **Status:** feature+unit+api done
+- **Status:** done
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|

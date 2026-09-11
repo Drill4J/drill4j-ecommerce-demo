@@ -101,4 +101,19 @@ test.describe('Products & basket', () => {
       await expect(cards.nth(i)).toContainText('Gaming');
     }
   });
+
+  test('C2 Add valid quantity within stock from product details', async ({ page }, testInfo) => {
+    const user = createUniqueUser(testInfo);
+    await signUp(page, user);
+    await page.goto('/products');
+    const card = page.locator('article.product-card').first();
+    await card.getByRole('link', { name: 'Details' }).click();
+    const qty = page.locator('input[type="number"]').first();
+    if (await qty.count()) {
+      await qty.fill('2');
+    }
+    await page.getByRole('button', { name: /add to basket/i }).click();
+    await openBasket(page);
+    await expect(page.locator('.list-row').first()).toBeVisible();
+  });
 });

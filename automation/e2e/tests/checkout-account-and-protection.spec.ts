@@ -155,5 +155,35 @@ test.describe('Checkout, account, and access rules', () => {
     });
     await expect(page.getByText(/PLACED_COD|Cash on Delivery|CASH_ON_DELIVERY/i).first()).toBeVisible();
   });
-});
 
+  test('C4 Enter valid promo SAVE10 and place discounted order', async ({ page }, testInfo) => {
+    const user = createUniqueUser(testInfo);
+    await signUp(page, user);
+
+    await addFirstProductToBasketFromList(page);
+    await openBasket(page);
+    await page.getByRole('button', { name: 'Proceed to checkout' }).click();
+
+    await page.getByLabel('Full name').fill('C4 Promo Buyer');
+    await page.getByLabel('Phone number').fill('+1-555-400-400');
+    await page.getByLabel('Address line').fill('Promo Ave 4');
+    await page.getByLabel('City').fill('Austin');
+    await page.getByLabel('Postal code').fill('73301');
+    await page.getByRole('button', { name: 'Continue to payment' }).click();
+    await page.getByRole('button', { name: 'Continue to review' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Review your order' })).toBeVisible();
+    const totalBefore = await page.locator('.price').innerText();
+
+    await page.getByLabel('Promo code').fill('SAVE10');
+    await page.getByRole('button', { name: 'Apply' }).click();
+    await expect(page.getByText(/Promo SAVE10:/i)).toBeVisible();
+    await expect(page.locator('.price')).not.toHaveText(totalBefore);
+
+    const placeOrderButton = page.getByRole('button', { name: 'Place order' });
+    await placeOrderButton.click();
+    await expect(placeOrderButton).toBeHidden();
+    await expect(page.locator('.order-loading-overlay')).toBeHidden({ timeout: PROCESSING_ORDER_MAX_TIMEOUT });
+    await expect(page.getByRole('heading', { name: 'Order confirmed' })).toBeVisible();
+  });
+});

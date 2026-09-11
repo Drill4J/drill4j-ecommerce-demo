@@ -78,7 +78,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** [7) Apply promo code at checkout](user-flows.md#7-apply-promo-code-at-checkout)
 - **Touches:** backend, frontend
-- **Status:** feature+unit+api done
+- **Status:** done
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|

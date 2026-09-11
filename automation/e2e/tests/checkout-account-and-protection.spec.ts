@@ -206,4 +206,42 @@ test.describe('Checkout, account, and access rules', () => {
     await expect(page.getByRole('heading', { name: 'Review your order' })).toBeVisible();
     await expect(page.getByText(/Delivery fee:\s*\$5\.00/)).toBeVisible();
   });
+
+  test('C6 Save address on Account and place order with saved address', async ({ page }, testInfo) => {
+    const user = createUniqueUser(testInfo);
+    await signUp(page, user);
+
+    await page.getByRole('link', { name: new RegExp(user.email) }).click();
+    await expect(page.getByRole('heading', { name: 'Account' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Saved shipping addresses' })).toBeVisible();
+
+    const addressForm = page.locator('form').filter({ has: page.getByRole('heading', { name: 'Add address' }) });
+    await addressForm.getByLabel('Full name').fill('C6 Saved Buyer');
+    await addressForm.getByLabel('Phone number').fill('+1-555-600-600');
+    await addressForm.getByLabel('Address line').fill('Saved St 6');
+    await addressForm.getByLabel('City').fill('Austin');
+    await addressForm.getByLabel('Postal code').fill('73301');
+    await addressForm.getByRole('button', { name: 'Save address' }).click();
+    await expect(page.getByText('Address saved.')).toBeVisible();
+    await expect(page.getByText('Saved St 6, Austin, 73301')).toBeVisible();
+
+    await addFirstProductToBasketFromList(page);
+    await openBasket(page);
+    await page.getByRole('button', { name: 'Proceed to checkout' }).click();
+
+    await expect(page.getByLabel('Saved address')).toBeVisible();
+    await expect(page.getByLabel('Saved address')).toHaveValue(/.+/);
+    await expect(page.getByLabel('Address line')).toHaveValue('Saved St 6');
+    await expect(page.getByLabel('City')).toHaveValue('Austin');
+
+    await page.getByRole('button', { name: 'Continue to payment' }).click();
+    await page.getByRole('button', { name: 'Continue to review' }).click();
+    await expect(page.getByText(/Ship to:.*Saved St 6.*Austin/)).toBeVisible();
+
+    const placeOrderButton = page.getByRole('button', { name: 'Place order' });
+    await placeOrderButton.click();
+    await expect(placeOrderButton).toBeHidden();
+    await expect(page.locator('.order-loading-overlay')).toBeHidden({ timeout: PROCESSING_ORDER_MAX_TIMEOUT });
+    await expect(page.getByRole('heading', { name: 'Order confirmed' })).toBeVisible();
+  });
 });

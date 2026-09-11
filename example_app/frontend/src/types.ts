@@ -42,6 +42,9 @@ export type CheckoutPreview = {
   items: BasketItem[]
   totalAmount: number
   paymentMethod: string
+  promoCode?: string | null
+  discountAmount?: number | null
+  deliveryFee?: number | null
 }
 
 export type Order = {
@@ -51,4 +54,7 @@ export type Order = {
   items: BasketItem[]
   totalAmount: number
   paymentMethod: string
+  promoCode?: string | null
+  discountAmount?: number | null
+  deliveryFee?: number | null
 }

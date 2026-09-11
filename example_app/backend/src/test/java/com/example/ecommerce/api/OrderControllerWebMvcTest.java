@@ -20,6 +20,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,11 +52,14 @@ class OrderControllerWebMvcTest {
                 OrderService.ORDER_STATUS_PLACED_COD,
                 shippingInfo,
                 items,
-                new BigDecimal("49.98"),
-                OrderService.PAYMENT_METHOD_COD
+                new BigDecimal("54.98"),
+                OrderService.PAYMENT_METHOD_COD,
+                null,
+                BigDecimal.ZERO,
+                new BigDecimal("5.00")
         );
         when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
-        when(orderService.previewOrder(anyString(), any(ShippingInfo.class))).thenReturn(preview);
+        when(orderService.previewOrder(anyString(), any(ShippingInfo.class), isNull())).thenReturn(preview);
 
         mockMvc.perform(post("/api/v1/checkout/preview")
                         .header("Authorization", "Bearer test")
@@ -76,10 +80,51 @@ class OrderControllerWebMvcTest {
                 .andExpect(jsonPath("$.items[0].productId").value("p-1001"))
                 .andExpect(jsonPath("$.items[0].quantity").value(2))
                 .andExpect(jsonPath("$.items[0].lineTotal").value(49.98))
-                .andExpect(jsonPath("$.totalAmount").value(49.98))
+                .andExpect(jsonPath("$.deliveryFee").value(5.00))
+                .andExpect(jsonPath("$.totalAmount").value(54.98))
                 .andExpect(jsonPath("$.paymentMethod").value("CASH_ON_DELIVERY"));
 
-        verify(orderService).previewOrder(PRINCIPAL.userId(), shippingInfo);
+        verify(orderService).previewOrder(PRINCIPAL.userId(), shippingInfo, null);
+    }
+
+    @Test
+    void previewCheckoutShouldReturnDeliveryFeeForKnownCity() throws Exception {
+        ShippingInfo shippingInfo = shippingInfo();
+        List<BasketItem> items = List.of(new BasketItem(product("p-1001", "24.99"), 2));
+        Order preview = new Order(
+                "preview",
+                OrderService.ORDER_STATUS_PLACED_COD,
+                shippingInfo,
+                items,
+                new BigDecimal("54.98"),
+                OrderService.PAYMENT_METHOD_COD,
+                null,
+                BigDecimal.ZERO,
+                new BigDecimal("5.00")
+        );
+        when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
+        when(orderService.previewOrder(anyString(), any(ShippingInfo.class), isNull())).thenReturn(preview);
+
+        mockMvc.perform(post("/api/v1/checkout/preview")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "shippingInfo": {
+                                    "fullName": "Jane Doe",
+                                    "phoneNumber": "+1-555-100-100",
+                                    "addressLine": "Main street 10",
+                                    "city": "Austin",
+                                    "postalCode": "73301"
+                                  }
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.shippingInfo.city").value("Austin"))
+                .andExpect(jsonPath("$.deliveryFee").value(5.00))
+                .andExpect(jsonPath("$.totalAmount").value(54.98));
+
+        verify(orderService).previewOrder(PRINCIPAL.userId(), shippingInfo, null);
     }
 
     @Test
@@ -91,11 +136,14 @@ class OrderControllerWebMvcTest {
                 OrderService.ORDER_STATUS_PLACED_COD,
                 shippingInfo,
                 items,
-                new BigDecimal("79.00"),
-                OrderService.PAYMENT_METHOD_COD
+                new BigDecimal("84.00"),
+                OrderService.PAYMENT_METHOD_COD,
+                null,
+                BigDecimal.ZERO,
+                new BigDecimal("5.00")
         );
         when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
-        when(orderService.placeOrder(anyString(), any(ShippingInfo.class))).thenReturn(placed);
+        when(orderService.placeOrder(anyString(), any(ShippingInfo.class), isNull())).thenReturn(placed);
 
         mockMvc.perform(post("/api/v1/orders")
                         .header("Authorization", "Bearer test")
@@ -117,10 +165,11 @@ class OrderControllerWebMvcTest {
                 .andExpect(jsonPath("$.shippingInfo.city").value("Austin"))
                 .andExpect(jsonPath("$.items[0].productId").value("p-1002"))
                 .andExpect(jsonPath("$.items[0].lineTotal").value(79.00))
-                .andExpect(jsonPath("$.totalAmount").value(79.00))
+                .andExpect(jsonPath("$.deliveryFee").value(5.00))
+                .andExpect(jsonPath("$.totalAmount").value(84.00))
                 .andExpect(jsonPath("$.paymentMethod").value("CASH_ON_DELIVERY"));
 
-        verify(orderService).placeOrder(PRINCIPAL.userId(), shippingInfo);
+        verify(orderService).placeOrder(PRINCIPAL.userId(), shippingInfo, null);
     }
 
     @Test
@@ -132,8 +181,11 @@ class OrderControllerWebMvcTest {
                 OrderService.ORDER_STATUS_PLACED_COD,
                 shippingInfo,
                 items,
-                new BigDecimal("129.50"),
-                OrderService.PAYMENT_METHOD_COD
+                new BigDecimal("134.50"),
+                OrderService.PAYMENT_METHOD_COD,
+                null,
+                BigDecimal.ZERO,
+                new BigDecimal("5.00")
         );
         when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
         when(orderService.getOrder(PRINCIPAL.userId(), "ord-xyz")).thenReturn(order);
@@ -143,7 +195,8 @@ class OrderControllerWebMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderId").value("ord-xyz"))
                 .andExpect(jsonPath("$.items[0].productId").value("p-1003"))
-                .andExpect(jsonPath("$.totalAmount").value(129.50));
+                .andExpect(jsonPath("$.deliveryFee").value(5.00))
+                .andExpect(jsonPath("$.totalAmount").value(134.50));
 
         verify(orderService).getOrder(eq(PRINCIPAL.userId()), eq("ord-xyz"));
     }

@@ -208,8 +208,8 @@ Expected result:
 - Order confirmation: implemented.
 - Category filter: implemented ([C1](incremental-changes.md#c1-category-filter-on-catalog)).
 - Stock-aware quantity limits: implemented ([C2](incremental-changes.md#c2-stock-aware-basket-quantity-limits), [C3](incremental-changes.md#c3-stock-revalidation-on-place-order)).
-- Promo codes: planned ([C4](incremental-changes.md#c4-promo-codes-at-checkout)).
-- Delivery fee by destination: planned ([C5](incremental-changes.md#c5-delivery-fee-by-destination)).
+- Promo codes: implemented ([C4](incremental-changes.md#c4-promo-codes-at-checkout)).
+- Delivery fee by destination: implemented ([C5](incremental-changes.md#c5-delivery-fee-by-destination)).
 - Saved shipping addresses: planned ([C6](incremental-changes.md#c6-saved-shipping-addresses)).
 - Order cancellation: planned ([C7](incremental-changes.md#c7-cancel-placed-cod-order)).
 - Reorder: planned ([C8](incremental-changes.md#c8-reorder-from-order-history)).
@@ -227,8 +227,8 @@ Expected result:
 - Order confirmation: implemented.
 - Category filter: implemented ([C1](incremental-changes.md#c1-category-filter-on-catalog)).
 - Stock-aware quantity limits: implemented ([C2](incremental-changes.md#c2-stock-aware-basket-quantity-limits), [C3](incremental-changes.md#c3-stock-revalidation-on-place-order)).
-- Promo codes: planned ([C4](incremental-changes.md#c4-promo-codes-at-checkout)).
-- Delivery fee by destination: planned ([C5](incremental-changes.md#c5-delivery-fee-by-destination)).
+- Promo codes: implemented ([C4](incremental-changes.md#c4-promo-codes-at-checkout)).
+- Delivery fee by destination: implemented ([C5](incremental-changes.md#c5-delivery-fee-by-destination)).
 - Saved shipping addresses: planned ([C6](incremental-changes.md#c6-saved-shipping-addresses)).
 - Order cancellation: planned ([C7](incremental-changes.md#c7-cancel-placed-cod-order)).
 - Reorder: planned ([C8](incremental-changes.md#c8-reorder-from-order-history)).

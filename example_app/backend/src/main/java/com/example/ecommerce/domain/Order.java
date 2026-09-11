@@ -9,6 +9,9 @@ public record Order(
         ShippingInfo shippingInfo,
         List<BasketItem> items,
         BigDecimal totalAmount,
-        String paymentMethod
+        String paymentMethod,
+        String promoCode,
+        BigDecimal discountAmount,
+        BigDecimal deliveryFee
 ) {
 }

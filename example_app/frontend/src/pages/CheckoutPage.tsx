@@ -37,6 +37,7 @@ export function CheckoutPage() {
   const [step, setStep] = useState<Step>(1)
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo>(initialShippingInfo)
   const [preview, setPreview] = useState<CheckoutPreview | null>(null)
+  const [promoCode, setPromoCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [loadingStep, setLoadingStep] = useState(0)
@@ -56,11 +57,22 @@ export function CheckoutPage() {
   const handlePaymentContinue = async () => {
     setError('')
     try {
-      const result = await checkoutPreview(shippingInfo)
+      const result = await checkoutPreview(shippingInfo, promoCode)
       setPreview(result)
       setStep(3)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to preview checkout'
+      setError(message)
+    }
+  }
+
+  const handleApplyPromo = async () => {
+    setError('')
+    try {
+      const result = await checkoutPreview(shippingInfo, promoCode)
+      setPreview(result)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to apply promo code'
       setError(message)
     }
   }
@@ -168,7 +180,7 @@ export function CheckoutPage() {
     try {
       // The "await" will block until processing will be finished.
       const [order] = await Promise.all([
-          placeOrder(shippingInfo),
+          placeOrder(shippingInfo, promoCode),
           delay(totalDuration)
       ])
       await refreshBasket()
@@ -298,6 +310,32 @@ export function CheckoutPage() {
               </div>
             ))}
           </div>
+
+          <label>
+            Promo code
+            <div className="row">
+              <input
+                className="input"
+                value={promoCode}
+                placeholder="e.g. SAVE10"
+                onChange={(event) => setPromoCode(event.target.value)}
+              />
+              <button className="button secondary" type="button" onClick={() => void handleApplyPromo()}>
+                Apply
+              </button>
+            </div>
+          </label>
+          {preview.promoCode && preview.discountAmount != null && preview.discountAmount > 0 && (
+            <p className="muted">
+              Promo {preview.promoCode}: −{formatCurrency(preview.discountAmount)}
+            </p>
+          )}
+
+          {preview.deliveryFee != null && (
+            <p>
+              <strong>Delivery fee:</strong> {formatCurrency(preview.deliveryFee)}
+            </p>
+          )}
 
           <p className="price">Total: {formatCurrency(preview.totalAmount)}</p>
           <div className="row">

@@ -7,6 +7,9 @@ public record CheckoutPreviewResponse(
         ShippingInfoRequest shippingInfo,
         List<BasketItemResponse> items,
         BigDecimal totalAmount,
-        String paymentMethod
+        String paymentMethod,
+        String promoCode,
+        BigDecimal discountAmount,
+        BigDecimal deliveryFee
 ) {
 }

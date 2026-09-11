@@ -1,5 +1,6 @@
 package com.example.ecommerce.service;
 
+import com.example.ecommerce.domain.AppliedPromo;
 import com.example.ecommerce.domain.BasketItem;
 import com.example.ecommerce.domain.Order;
 import com.example.ecommerce.domain.ShippingInfo;
@@ -21,27 +22,49 @@ public class OrderService {
     public static final String ORDER_STATUS_PLACED_COD = "PLACED_COD";
 
     private final BasketService basketService;
+    private final PromoService promoService;
+    private final DeliveryFeeService deliveryFeeService;
     private final ConcurrentHashMap<String, Map<String, Order>> ordersByUserId = new ConcurrentHashMap<>();
 
-    public OrderService(BasketService basketService) {
+    public OrderService(
+            BasketService basketService,
+            PromoService promoService,
+            DeliveryFeeService deliveryFeeService
+    ) {
         this.basketService = basketService;
+        this.promoService = promoService;
+        this.deliveryFeeService = deliveryFeeService;
     }
 
     public Order previewOrder(String userId, ShippingInfo shippingInfo) {
+        return previewOrder(userId, shippingInfo, null);
+    }
+
+    public Order previewOrder(String userId, ShippingInfo shippingInfo, String promoCode) {
         basketService.ensureNotEmpty(userId);
         List<BasketItem> items = basketService.snapshotItems(userId);
-        BigDecimal totalAmount = basketService.calculateSubtotal(userId);
+        BigDecimal subtotal = basketService.calculateSubtotal(userId);
+        AppliedPromo appliedPromo = promoService.apply(promoCode, subtotal);
+        BigDecimal merchandiseTotal = subtotal.subtract(appliedPromo.discountAmount());
+        BigDecimal deliveryFee = deliveryFeeService.calculateFee(shippingInfo.city(), merchandiseTotal);
         return new Order(
                 "preview",
                 ORDER_STATUS_PLACED_COD,
                 shippingInfo,
                 items,
-                totalAmount,
-                PAYMENT_METHOD_COD
+                merchandiseTotal.add(deliveryFee),
+                PAYMENT_METHOD_COD,
+                appliedPromo.code(),
+                appliedPromo.discountAmount(),
+                deliveryFee
         );
     }
 
     public Order placeOrder(String userId, ShippingInfo shippingInfo) {
+        return placeOrder(userId, shippingInfo, null);
+    }
+
+    public Order placeOrder(String userId, ShippingInfo shippingInfo, String promoCode) {
         basketService.ensureNotEmpty(userId);
         List<BasketItem> items = basketService.snapshotItems(userId);
         for (BasketItem item : items) {
@@ -49,15 +72,21 @@ public class OrderService {
                 throw new BadRequestException("Product is out of stock: " + item.product().id());
             }
         }
-        BigDecimal totalAmount = basketService.calculateSubtotal(userId);
+        BigDecimal subtotal = basketService.calculateSubtotal(userId);
+        AppliedPromo appliedPromo = promoService.apply(promoCode, subtotal);
+        BigDecimal merchandiseTotal = subtotal.subtract(appliedPromo.discountAmount());
+        BigDecimal deliveryFee = deliveryFeeService.calculateFee(shippingInfo.city(), merchandiseTotal);
         String orderId = UUID.randomUUID().toString();
         Order order = new Order(
                 orderId,
                 ORDER_STATUS_PLACED_COD,
                 shippingInfo,
                 items,
-                totalAmount,
-                PAYMENT_METHOD_COD
+                merchandiseTotal.add(deliveryFee),
+                PAYMENT_METHOD_COD,
+                appliedPromo.code(),
+                appliedPromo.discountAmount(),
+                deliveryFee
         );
         getOrCreateUserOrders(userId).put(orderId, order);
         basketService.clear(userId);

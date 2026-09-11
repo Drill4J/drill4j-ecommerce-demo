@@ -67,6 +67,101 @@ class OrderFlowIntegrationTest {
     }
 
     @Test
+    void previewAndPlaceWithPromoCodeShouldReduceTotal() throws Exception {
+        AuthPrincipal promoUser = new AuthPrincipal("u-promo", "promo@example.com");
+        when(authClient.verify(anyString())).thenReturn(promoUser);
+
+        mockMvc.perform(post("/api/v1/basket/items")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "productId": "p-1001",
+                                  "quantity": 2
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/v1/checkout/preview")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "shippingInfo": {
+                                    "fullName": "Jane Doe",
+                                    "phoneNumber": "+1-555-100-100",
+                                    "addressLine": "Main street 10",
+                                    "city": "Austin",
+                                    "postalCode": "73301"
+                                  },
+                                  "promoCode": "SAVE10"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.promoCode").value("SAVE10"))
+                .andExpect(jsonPath("$.discountAmount").value(5.00))
+                .andExpect(jsonPath("$.deliveryFee").value(5.00))
+                .andExpect(jsonPath("$.totalAmount").value(49.98));
+
+        mockMvc.perform(post("/api/v1/orders")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "shippingInfo": {
+                                    "fullName": "Jane Doe",
+                                    "phoneNumber": "+1-555-100-100",
+                                    "addressLine": "Main street 10",
+                                    "city": "Austin",
+                                    "postalCode": "73301"
+                                  },
+                                  "promoCode": "SAVE10"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.promoCode").value("SAVE10"))
+                .andExpect(jsonPath("$.discountAmount").value(5.00))
+                .andExpect(jsonPath("$.deliveryFee").value(5.00))
+                .andExpect(jsonPath("$.totalAmount").value(49.98));
+    }
+
+    @Test
+    void previewCheckoutShouldIncludeDeliveryFeeForKnownCity() throws Exception {
+        AuthPrincipal feeUser = new AuthPrincipal("u-fee", "fee@example.com");
+        when(authClient.verify(anyString())).thenReturn(feeUser);
+
+        mockMvc.perform(post("/api/v1/basket/items")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "productId": "p-1001",
+                                  "quantity": 2
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/v1/checkout/preview")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "shippingInfo": {
+                                    "fullName": "Jane Doe",
+                                    "phoneNumber": "+1-555-100-100",
+                                    "addressLine": "Main street 10",
+                                    "city": "Austin",
+                                    "postalCode": "73301"
+                                  }
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.shippingInfo.city").value("Austin"))
+                .andExpect(jsonPath("$.deliveryFee").value(5.00))
+                .andExpect(jsonPath("$.totalAmount").value(54.98));
+    }
+
+    @Test
     void shouldUpdateBasketQuantity() throws Exception {
         when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
 

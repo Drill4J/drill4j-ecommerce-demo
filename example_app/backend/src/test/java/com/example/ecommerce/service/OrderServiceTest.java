@@ -29,7 +29,7 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         basketService = mock(BasketService.class);
-        orderService = new OrderService(basketService);
+        orderService = new OrderService(basketService, new PromoService(), new DeliveryFeeService());
     }
 
     @Test
@@ -47,7 +47,10 @@ class OrderServiceTest {
         assertThat(preview.paymentMethod()).isEqualTo(OrderService.PAYMENT_METHOD_COD);
         assertThat(preview.shippingInfo()).isEqualTo(shippingInfo);
         assertThat(preview.items()).containsExactlyElementsOf(items);
-        assertThat(preview.totalAmount()).isEqualByComparingTo("49.98");
+        assertThat(preview.deliveryFee()).isEqualByComparingTo("5.00");
+        assertThat(preview.totalAmount()).isEqualByComparingTo("54.98");
+        assertThat(preview.promoCode()).isNull();
+        assertThat(preview.discountAmount()).isEqualByComparingTo("0");
     }
 
     @Test
@@ -68,8 +71,38 @@ class OrderServiceTest {
         assertThat(placed.status()).isEqualTo(OrderService.ORDER_STATUS_PLACED_COD);
         assertThat(placed.paymentMethod()).isEqualTo(OrderService.PAYMENT_METHOD_COD);
         assertThat(placed.items()).containsExactlyElementsOf(items);
-        assertThat(placed.totalAmount()).isEqualByComparingTo("103.99");
+        assertThat(placed.deliveryFee()).isEqualByComparingTo("5.00");
+        assertThat(placed.totalAmount()).isEqualByComparingTo("108.99");
         assertThat(orderService.getOrder(USER_ID, placed.id())).isEqualTo(placed);
+    }
+
+    @Test
+    void previewOrderShouldApplyValidPercentOffPromo() {
+        ShippingInfo shippingInfo = shippingInfo();
+        List<BasketItem> items = List.of(new BasketItem(product("p-1001", "24.99"), 2));
+        when(basketService.snapshotItems(USER_ID)).thenReturn(items);
+        when(basketService.calculateSubtotal(USER_ID)).thenReturn(new BigDecimal("49.98"));
+
+        Order preview = orderService.previewOrder(USER_ID, shippingInfo, "SAVE10");
+
+        assertThat(preview.promoCode()).isEqualTo("SAVE10");
+        assertThat(preview.discountAmount()).isEqualByComparingTo("5.00");
+        assertThat(preview.deliveryFee()).isEqualByComparingTo("5.00");
+        assertThat(preview.totalAmount()).isEqualByComparingTo("49.98");
+    }
+
+    @Test
+    void previewOrderShouldApplyKnownCityDeliveryFee() {
+        ShippingInfo shippingInfo = shippingInfo();
+        List<BasketItem> items = List.of(new BasketItem(product("p-1001", "24.99"), 2));
+        when(basketService.snapshotItems(USER_ID)).thenReturn(items);
+        when(basketService.calculateSubtotal(USER_ID)).thenReturn(new BigDecimal("49.98"));
+
+        Order preview = orderService.previewOrder(USER_ID, shippingInfo);
+
+        assertThat(shippingInfo.city()).isEqualTo("Austin");
+        assertThat(preview.deliveryFee()).isEqualByComparingTo(DeliveryFeeService.AUSTIN_FEE);
+        assertThat(preview.totalAmount()).isEqualByComparingTo("54.98");
     }
 
     @Test

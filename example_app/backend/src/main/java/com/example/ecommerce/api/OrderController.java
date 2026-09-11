@@ -41,12 +41,19 @@ public class OrderController {
             @RequestAttribute(AuthRequestAttributes.PRINCIPAL) AuthPrincipal principal,
             @Valid @RequestBody CheckoutPreviewRequest request
     ) {
-        Order previewOrder = orderService.previewOrder(principal.userId(), toShippingInfo(request.shippingInfo()));
+        Order previewOrder = orderService.previewOrder(
+                principal.userId(),
+                toShippingInfo(request.shippingInfo()),
+                request.promoCode()
+        );
         return new CheckoutPreviewResponse(
                 request.shippingInfo(),
                 toBasketItemResponses(previewOrder.items()),
                 previewOrder.totalAmount(),
-                previewOrder.paymentMethod()
+                previewOrder.paymentMethod(),
+                previewOrder.promoCode(),
+                previewOrder.discountAmount(),
+                previewOrder.deliveryFee()
         );
     }
 
@@ -56,7 +63,11 @@ public class OrderController {
             @RequestAttribute(AuthRequestAttributes.PRINCIPAL) AuthPrincipal principal,
             @Valid @RequestBody PlaceOrderRequest request
     ) {
-        Order order = orderService.placeOrder(principal.userId(), toShippingInfo(request.shippingInfo()));
+        Order order = orderService.placeOrder(
+                principal.userId(),
+                toShippingInfo(request.shippingInfo()),
+                request.promoCode()
+        );
         return toOrderResponse(order);
     }
 
@@ -82,7 +93,10 @@ public class OrderController {
                 toShippingInfoRequest(order.shippingInfo()),
                 toBasketItemResponses(order.items()),
                 order.totalAmount(),
-                order.paymentMethod()
+                order.paymentMethod(),
+                order.promoCode(),
+                order.discountAmount(),
+                order.deliveryFee()
         );
     }
 

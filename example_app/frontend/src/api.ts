@@ -114,19 +114,25 @@ export async function removeBasketItem(productId: string): Promise<Basket> {
   return getBasket()
 }
 
-export function checkoutPreview(shippingInfo: ShippingInfo): Promise<CheckoutPreview> {
+export function checkoutPreview(shippingInfo: ShippingInfo, promoCode?: string): Promise<CheckoutPreview> {
   return fetchJson<CheckoutPreview>('/checkout/preview', {
     method: 'POST',
     includeAuth: true,
-    body: JSON.stringify({ shippingInfo }),
+    body: JSON.stringify({
+      shippingInfo,
+      ...(promoCode && promoCode.trim() ? { promoCode: promoCode.trim() } : {}),
+    }),
   })
 }
 
-export function placeOrder(shippingInfo: ShippingInfo): Promise<Order> {
+export function placeOrder(shippingInfo: ShippingInfo, promoCode?: string): Promise<Order> {
   return fetchJson<Order>('/orders', {
     method: 'POST',
     includeAuth: true,
-    body: JSON.stringify({ shippingInfo }),
+    body: JSON.stringify({
+      shippingInfo,
+      ...(promoCode && promoCode.trim() ? { promoCode: promoCode.trim() } : {}),
+    }),
   })
 }
 

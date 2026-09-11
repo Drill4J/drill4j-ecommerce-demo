@@ -31,6 +31,20 @@ class BasketServiceTest {
     }
 
     @Test
+    void addItemShouldAcceptQuantityWithinStockLimit() {
+        Product mouse = product("p-1001", "24.99", true);
+        when(productService.getProductById("p-1001")).thenReturn(mouse);
+
+        basketService.addItem(USER_ID, "p-1001", Product.DEFAULT_AVAILABLE_STOCK);
+
+        List<BasketItem> items = basketService.getBasketItems(USER_ID);
+        assertThat(items).hasSize(1);
+        assertThat(items.get(0).product().id()).isEqualTo("p-1001");
+        assertThat(items.get(0).quantity()).isEqualTo(Product.DEFAULT_AVAILABLE_STOCK);
+        assertThat(basketService.totalItems(USER_ID)).isEqualTo(Product.DEFAULT_AVAILABLE_STOCK);
+    }
+
+    @Test
     void addItemShouldMergeQuantityForSameProduct() {
         Product mouse = product("p-1001", "24.99", true);
         when(productService.getProductById("p-1001")).thenReturn(mouse);

@@ -11,4 +11,10 @@ public record Product(
         String category,
         boolean inStock
 ) {
+    /** Demo stock ceiling when the product is marked in stock. */
+    public static final int DEFAULT_AVAILABLE_STOCK = 10;
+
+    public int availableStock() {
+        return inStock ? DEFAULT_AVAILABLE_STOCK : 0;
+    }
 }

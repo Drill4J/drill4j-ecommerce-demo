@@ -34,6 +34,13 @@ public class BasketService {
         if (!product.inStock()) {
             throw new BadRequestException("Product is out of stock: " + productId);
         }
+        int available = product.availableStock();
+        // Incoming qty only — merged total overflow is an intentional C2 Gap.
+        if (quantity > available) {
+            throw new BadRequestException(
+                    "Requested quantity exceeds available stock (" + available + ") for product: " + productId
+            );
+        }
         getOrCreateUserBasket(userId).merge(productId, quantity, (currentQty, incomingQty) -> {
             int current = currentQty != null ? currentQty : 0;
             int incoming = incomingQty != null ? incomingQty : 0;

@@ -63,13 +63,15 @@ class BasketControllerWebMvcTest {
     }
 
     @Test
-    void addBasketItemShouldReturnCreatedAndUpdatedBasket() throws Exception {
+    void addBasketItemWithinStockLimitShouldReturnCreated() throws Exception {
+        int quantityWithinLimit = 5;
         Product keyboard = product("p-1002", "Mechanical Keyboard", "79.00");
         when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
-        doNothing().when(basketService).addItem(eq(PRINCIPAL.userId()), eq("p-1002"), eq(3));
-        when(basketService.getBasketItems(PRINCIPAL.userId())).thenReturn(List.of(new BasketItem(keyboard, 3)));
-        when(basketService.totalItems(PRINCIPAL.userId())).thenReturn(3);
-        when(basketService.calculateSubtotal(PRINCIPAL.userId())).thenReturn(new BigDecimal("237.00"));
+        doNothing().when(basketService).addItem(eq(PRINCIPAL.userId()), eq("p-1002"), eq(quantityWithinLimit));
+        when(basketService.getBasketItems(PRINCIPAL.userId()))
+                .thenReturn(List.of(new BasketItem(keyboard, quantityWithinLimit)));
+        when(basketService.totalItems(PRINCIPAL.userId())).thenReturn(quantityWithinLimit);
+        when(basketService.calculateSubtotal(PRINCIPAL.userId())).thenReturn(new BigDecimal("395.00"));
 
         mockMvc.perform(post("/api/v1/basket/items")
                         .header("Authorization", "Bearer test")
@@ -77,17 +79,17 @@ class BasketControllerWebMvcTest {
                         .content("""
                                 {
                                   "productId": "p-1002",
-                                  "quantity": 3
+                                  "quantity": 5
                                 }
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.items[0].productId").value("p-1002"))
-                .andExpect(jsonPath("$.items[0].quantity").value(3))
-                .andExpect(jsonPath("$.items[0].lineTotal").value(237.00))
-                .andExpect(jsonPath("$.totalItems").value(3))
-                .andExpect(jsonPath("$.subtotal").value(237.00));
+                .andExpect(jsonPath("$.items[0].quantity").value(quantityWithinLimit))
+                .andExpect(jsonPath("$.items[0].lineTotal").value(395.00))
+                .andExpect(jsonPath("$.totalItems").value(quantityWithinLimit))
+                .andExpect(jsonPath("$.subtotal").value(395.00));
 
-        verify(basketService).addItem(PRINCIPAL.userId(), "p-1002", 3);
+        verify(basketService).addItem(PRINCIPAL.userId(), "p-1002", quantityWithinLimit);
     }
 
     @Test

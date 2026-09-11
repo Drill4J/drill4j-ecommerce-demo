@@ -12,6 +12,7 @@ export type PageParams = {
   page: number;
   size: number;
   search?: string; // Optional search query
+  category?: string; // Optional exact category filter
 }
 
 export type BasketItem = {

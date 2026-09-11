@@ -6,16 +6,32 @@ import type { Product } from '../types'
 
 const DEFAULT_PAGE_SIZE = 8;
 
+const CATEGORIES = [
+  'Accessories',
+  'Audio',
+  'Fitness',
+  'Gaming',
+  'Home',
+  'Office',
+  'Photography',
+  'Storage',
+] as const;
+
 export function ProductListPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [page, setPage] = useState(0)
   const [search, setSearch] = useState('')
+  const [category, setCategory] = useState('')
   const [error, setError] = useState('')
   const { addItem } = useBasket()
 
-    // Fetch from backend whenever page OR search text changes
   useEffect(() => {
-      getProducts({ page, size: DEFAULT_PAGE_SIZE, search })
+      getProducts({
+        page,
+        size: DEFAULT_PAGE_SIZE,
+        search: search || undefined,
+        category: category || undefined,
+      })
           .then((data) => {
               setProducts(data)
               setError('')
@@ -24,11 +40,16 @@ export function ProductListPage() {
               const message = err instanceof Error ? err.message : 'Failed to load products'
               setError(message)
           })
-  }, [page, search]) // Dependent on 'page' and 'search'
+  }, [page, search, category])
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
       setSearch(event.target.value)
-      setPage(0) // search should always start results on page 1
+      setPage(0)
+  }
+
+  const handleCategorySelect = (next: string) => {
+      setCategory((prev) => (prev === next ? '' : next))
+      setPage(0)
   }
 
   const filteredProducts = useMemo(() => {
@@ -45,7 +66,6 @@ export function ProductListPage() {
     void addItem(productId, 1)
   }
 
-    // Handle page switches safely
   const handlePrevPage = () => {
       setPage((prev) => Math.max(0, prev - 1))
   }
@@ -63,10 +83,23 @@ export function ProductListPage() {
       <div className="row">
         <input
           value={search}
-          onChange={handleSearchChange} // Uses reset handling method
+          onChange={handleSearchChange}
           placeholder="Search by name, description, category"
           className="input"
         />
+      </div>
+      <div className="row category-filters" role="group" aria-label="Product categories">
+        {CATEGORIES.map((name) => (
+          <button
+            key={name}
+            type="button"
+            className={category === name ? 'pagination-button' : 'pagination-button secondary'}
+            aria-pressed={category === name}
+            onClick={() => handleCategorySelect(name)}
+          >
+            {name}
+          </button>
+        ))}
       </div>
       {error && <p className="error">{error}</p>}
       {!error && filteredProducts.length === 0 && <p>No products found.</p>}
@@ -75,24 +108,17 @@ export function ProductListPage() {
           <ProductCard key={product.id} product={product} onAddToBasket={handleAddToBasket} />
         ))}
       </div>
-        {/* Pagination Controls Section using isolated classes */}
         <div className="pagination-container">
-            {/* PREVIOUS BUTTON */}
             <button
                 onClick={handlePrevPage}
                 disabled={isPrevDisabled}
-                // Uses isolated 'pagination-button' styles, appending 'secondary' when disabled
                 className={isPrevDisabled ? 'pagination-button secondary' : 'pagination-button'}
             >
                 Previous
             </button>
-
-            {/* PAGE INDICATOR */}
             <span className="pagination-text">
           Page {page + 1}
         </span>
-
-            {/* NEXT BUTTON */}
             <button
                 onClick={handleNextPage}
                 disabled={isNextDisabled}

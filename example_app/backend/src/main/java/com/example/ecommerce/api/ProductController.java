@@ -26,9 +26,10 @@ public class ProductController {
     public List<ProductResponse> listProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String search
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category
     ) {
-        return productService.listProducts(page, size, search)
+        return productService.listProducts(page, size, search, category)
                 .stream()
                 .map(ProductController::toResponse)
                 .toList();

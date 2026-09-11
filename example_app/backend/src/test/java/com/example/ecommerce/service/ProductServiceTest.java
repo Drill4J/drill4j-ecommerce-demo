@@ -161,6 +161,35 @@ public class ProductServiceTest {
         assertThat(paginatedList).isEmpty();
     }
 
+    @Test
+    void listProductsShouldFilterByKnownCategoryWithPagination() throws Exception {
+        // Cover: exact category filter + pagination (leave unknown / category+search as gaps)
+        Map<String, Product> catalog = new java.util.HashMap<>();
+        catalog.put("p-g1", product("p-g1", "Pad", "Gaming"));
+        catalog.put("p-g2", product("p-g2", "Headset", "Gaming"));
+        catalog.put("p-g3", product("p-g3", "Chair", "Gaming"));
+        catalog.put("p-g4", product("p-g4", "Mouse", "Gaming"));
+        catalog.put("p-g5", product("p-g5", "Desk", "Gaming"));
+        catalog.put("p-g6", product("p-g6", "Light", "Gaming"));
+        catalog.put("p-a1", product("p-a1", "Cable", "Accessories"));
+        generatedProducts = catalog;
+        when(objectMapper.readValue(any(InputStream.class), any(TypeReference.class)))
+                .thenReturn(generatedProducts);
+        productService.init();
+
+        List<Product> page0 = productService.listProducts(0, 5, null, "Gaming");
+        assertThat(page0).hasSize(5);
+        assertThat(page0).allMatch(p -> p.category().equalsIgnoreCase("Gaming"));
+
+        List<Product> page1 = productService.listProducts(1, 5, null, "gaming");
+        assertThat(page1).hasSize(1);
+        assertThat(page1.get(0).id()).isEqualTo("p-g6");
+    }
+
+    private static Product product(String id, String name, String category) {
+        return new Product(id, name, "Desc", BigDecimal.TEN, "url", category, true);
+    }
+
     private Map<String, Product> createMockProductsMap() {
         return IntStream.rangeClosed(1, 15).mapToObj(indx -> {
             String id = String.format("p-%04d", indx);

@@ -78,6 +78,9 @@ export function getProducts(params: PageParams): Promise<Product[]> {
   if (params.search && params.search.trim()) {
     queryParams.append('search', params.search.trim());
   }
+  if (params.category && params.category.trim()) {
+    queryParams.append('category', params.category.trim());
+  }
 
   return fetchJson<Product[]>(`/products?${queryParams.toString()}`);
 }

@@ -39,6 +39,7 @@ public class ProductService {
                         new TypeReference<>() {
                         }
                 );
+                products.clear();
                 products.putAll(loadedMap);
             }
         } catch (Exception e) {
@@ -59,6 +60,16 @@ public class ProductService {
      * @param searchText Search term to filter by (optional)
      */
     public List<Product> listProducts(int page, int size, String searchText) {
+        return listProducts(page, size, searchText, null);
+    }
+
+    /**
+     * Lists paginated products with optional free-text search and exact category filter.
+     *
+     * @param category Exact category name (case-insensitive). Blank/null = no category filter.
+     *                 Unknown category yields an empty page (not an error).
+     */
+    public List<Product> listProducts(int page, int size, String searchText, String category) {
         // prevent negative numbers
         int pageIndex = Math.max(0, page);
         int pageSize = Math.max(MIN_PAGE_SIZE, size);
@@ -68,7 +79,13 @@ public class ProductService {
                 .map(String::trim)
                 .map(String::toLowerCase)
                 .orElse("");
+        final String categoryFilter = Optional.ofNullable(category)
+                .map(String::trim)
+                .map(String::toLowerCase)
+                .orElse("");
         return products.values().stream()
+                .filter(product -> categoryFilter.isEmpty()
+                        || (product.category() != null && product.category().equalsIgnoreCase(categoryFilter)))
                 // filter: Search across name, description, or category
                 .filter(product -> query.isEmpty() ||
                         Stream.of(product.name(), product.description(), product.category())

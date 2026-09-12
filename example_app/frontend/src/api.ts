@@ -85,6 +85,10 @@ export function getProducts(params: PageParams): Promise<Product[]> {
   return fetchJson<Product[]>(`/products?${queryParams.toString()}`);
 }
 
+export function getFeaturedProducts(): Promise<Product[]> {
+  return fetchJson<Product[]>('/products/featured')
+}
+
 export function getProduct(productId: string): Promise<Product> {
   return fetchJson<Product>(`/products/${productId}`)
 }

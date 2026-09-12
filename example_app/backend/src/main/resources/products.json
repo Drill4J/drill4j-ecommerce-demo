@@ -6,25 +6,28 @@
     "price": 24.99,
     "imageUrl": "https://picsum.photos/seed/mouse/400/300",
     "category": "Accessories",
-    "inStock": true
+    "inStock": true,
+    "featured": true
   },
   "p-1002": {
     "id": "p-1002",
     "name": "Mechanical Keyboard",
     "description": "Upgrade your typing experience with this compact mechanical keyboard, designed for users who appreciate responsive and tactile key presses. Its tactile switches provide satisfying feedback with every keystroke, making it suitable for office work, studying, programming, gaming, and everyday browsing. The compact layout helps conserve valuable desk space while keeping essential functionality within easy reach. Its practical design fits neatly into modern workstations and gaming setups alike. Whether you are writing documents, entering data, communicating online, or enjoying your favorite games, this mechanical keyboard delivers a comfortable and engaging typing experience. It is a dependable choice for anyone seeking precision, convenience, and a more enjoyable alternative to a standard keyboard.",
-    "price": 79.00,
+    "price": 79.0,
     "imageUrl": "https://picsum.photos/seed/keyboard/400/300",
     "category": "Accessories",
-    "inStock": true
+    "inStock": true,
+    "featured": true
   },
   "p-1003": {
     "id": "p-1003",
     "name": "Noise-Canceling Headphones",
     "description": "Enjoy a more immersive listening experience with these over-ear noise-canceling headphones. Designed to surround your ears comfortably, they help create a focused environment for music, podcasts, movies, online meetings, and travel. Active noise cancellation helps minimize distracting background sounds, allowing you to concentrate on the audio that matters most. The over-ear construction provides a comfortable fit for extended listening sessions, whether you are working in a busy office, relaxing at home, or commuting. With their practical design and versatile performance, these headphones are a great companion for everyday entertainment and productivity. Experience greater focus, richer listening, and convenient personal audio whenever you need it.",
-    "price": 129.50,
+    "price": 129.5,
     "imageUrl": "https://picsum.photos/seed/headphones/400/300",
     "category": "Audio",
-    "inStock": true
+    "inStock": true,
+    "featured": true
   },
   "p-1004": {
     "id": "p-1004",
@@ -33,34 +36,38 @@
     "price": 99.99,
     "imageUrl": "https://picsum.photos/seed/ssd/400/300",
     "category": "Storage",
-    "inStock": true
+    "inStock": true,
+    "featured": true
   },
   "p-1005": {
     "id": "p-1005",
     "name": "Smart Desk Lamp",
     "description": "Illuminate your workspace with this smart LED desk lamp, designed for convenient everyday lighting. Its touch controls make it simple to operate, allowing you to adjust the lamp quickly without searching for a traditional switch. The modern design complements home offices, bedrooms, study areas, and professional workspaces. LED lighting provides an energy-conscious solution for reading, writing, computer work, or relaxing activities. Place it beside your monitor, on a bedside table, or anywhere additional light is needed. Combining practical controls with a clean appearance, this desk lamp helps create a more comfortable and productive environment while adding a contemporary touch to your room.",
-    "price": 39.90,
+    "price": 39.9,
     "imageUrl": "https://picsum.photos/seed/lamp/400/300",
     "category": "Home",
-    "inStock": true
+    "inStock": true,
+    "featured": true
   },
   "p-1007": {
     "id": "p-1007",
     "name": "UltraWide Gaming Monitor",
     "description": "Expand your gaming view with this 34-inch curved UltraWide gaming monitor, designed to provide an engaging and spacious display experience. The curved screen creates a natural viewing perspective, helping bring games, movies, and creative work to life across a broad field of view. Its 144Hz refresh rate supports smooth on-screen motion, making fast-paced gameplay feel more responsive and fluid. The expansive format is also useful for multitasking, allowing you to view multiple windows side by side. Whether you are gaming, editing content, browsing, or managing several applications, this monitor brings immersive visuals and practical workspace flexibility to your desk.",
-    "price": 349.50,
+    "price": 349.5,
     "imageUrl": "https://picsum.photos/seed/monitor/400/300",
     "category": "Gaming",
-    "inStock": true
+    "inStock": true,
+    "featured": true
   },
   "p-1008": {
     "id": "p-1008",
     "name": "Smart Fitness Watch",
     "description": "Keep track of your daily activity with this smart fitness watch, featuring a waterproof design and an integrated heart rate monitor. It is created for people who want convenient access to fitness information while exercising, walking, training, or following an active routine. The wearable format keeps useful tracking features close at hand without requiring you to carry a separate device. Its waterproof construction makes it suitable for a variety of everyday activities and workouts. Wear it at the gym, outdoors, or during your normal routine to stay more aware of your movement and heart rate. This fitness watch combines practical monitoring features with comfortable, everyday convenience.",
-    "price": 59.00,
+    "price": 59.0,
     "imageUrl": "https://picsum.photos/seed/watch/400/300",
     "category": "Fitness",
-    "inStock": true
+    "inStock": true,
+    "featured": true
   },
   "p-1009": {
     "id": "p-1009",
@@ -69,34 +76,38 @@
     "price": 89.99,
     "imageUrl": "https://picsum.photos/seed/router/400/300",
     "category": "Storage",
-    "inStock": false
+    "inStock": false,
+    "featured": true
   },
   "p-1010": {
     "id": "p-1010",
     "name": "4K Web Camera",
     "description": "Improve your video calls, streams, and online presentations with this Ultra HD webcam. The camera combines 4K video support with autofocus to help keep your image clear as you move or adjust your position. Dual microphones provide convenient audio capture for virtual meetings, conversations, and content creation. Its versatile design makes it suitable for home offices, workstations, classrooms, and streaming setups. Connect with colleagues, friends, audiences, or clients while presenting a sharper and more polished image. Whether you are attending remote meetings, recording videos, or streaming live content, this webcam offers practical features for a clearer and more confident online presence.",
-    "price": 69.90,
+    "price": 69.9,
     "imageUrl": "https://picsum.photos/seed/webcam/400/300",
     "category": "Accessories",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1011": {
     "id": "p-1011",
     "name": "Bluetooth Soundbar",
     "description": "Enhance your television audio with this compact Bluetooth soundbar, designed to bring fuller sound to your entertainment area. Deep bass subwoofers add extra impact to movies, shows, music, and games, helping create a more engaging listening experience than many built-in television speakers. Its compact format fits neatly beneath or near a TV without overwhelming your room. Bluetooth connectivity makes it convenient to enjoy audio from compatible devices as well. Use it for movie nights, casual music listening, gaming sessions, or everyday television viewing. Combining a space-saving design with enhanced bass and wireless convenience, this soundbar is a practical home audio upgrade.",
-    "price": 115.00,
+    "price": 115.0,
     "imageUrl": "https://picsum.photos/seed/soundbar/400/300",
     "category": "Audio",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1012": {
     "id": "p-1012",
     "name": "Vertical Ergonomic Mouse",
     "description": "Work more comfortably with this wireless vertical mouse, designed to encourage a more natural hand position during computer use. Its vertical shape helps reduce the need to rotate your wrist as much as with a conventional mouse, making it a useful option for extended browsing, office work, studying, and general navigation. The wireless design keeps your desk clear and allows flexible movement without a cable. Its ergonomic form fits naturally into a productivity-focused workstation. Whether you are managing documents, browsing the web, or completing daily tasks, this mouse offers comfortable control and convenient wireless freedom for a more relaxed computing experience.",
-    "price": 32.50,
+    "price": 32.5,
     "imageUrl": "https://picsum.photos/seed/vmouse/400/300",
     "category": "Accessories",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1013": {
     "id": "p-1013",
@@ -105,16 +116,18 @@
     "price": 19.99,
     "imageUrl": "https://picsum.photos/seed/charger/400/300",
     "category": "Accessories",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1014": {
     "id": "p-1014",
     "name": "Studio Microphone",
     "description": "Create clearer audio for streaming, podcasting, voice recording, and online communication with this USB condenser microphone. Its USB connection provides a straightforward setup for compatible computers and recording equipment, making it accessible for beginners and experienced creators alike. The studio-style design is suitable for recording spoken content, interviews, broadcasts, tutorials, and live sessions. Place it on your desk or in a dedicated recording area to bring a more focused audio solution to your setup. Whether you are launching a podcast, streaming gameplay, recording videos, or joining online meetings, this microphone offers convenient connectivity and a professional-looking addition to your workspace.",
-    "price": 85.00,
+    "price": 85.0,
     "imageUrl": "https://picsum.photos/seed/mic/400/300",
     "category": "Audio",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1015": {
     "id": "p-1015",
@@ -123,16 +136,18 @@
     "price": 29.99,
     "imageUrl": "https://picsum.photos/seed/sdcard/400/300",
     "category": "Storage",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1016": {
     "id": "p-1016",
     "name": "RGB LED Light Strip",
     "description": "Add colorful ambient lighting to your home with this 10-meter smart RGB LED light strip. Its extended length makes it suitable for decorating desks, shelves, entertainment areas, bedrooms, cabinets, and other spaces that could benefit from a creative lighting accent. Compatibility with Alexa and Google allows it to fit conveniently into supported smart-home routines and voice-controlled environments. Use it to create a more welcoming atmosphere for relaxing, gaming, entertaining, or working. The flexible strip format makes it easy to incorporate into different decorative layouts. Bring customizable color and smart-home convenience to your space with this versatile LED lighting solution.",
-    "price": 24.50,
+    "price": 24.5,
     "imageUrl": "https://picsum.photos/seed/ledstrip/400/300",
     "category": "Home",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1017": {
     "id": "p-1017",
@@ -141,25 +156,28 @@
     "price": 49.99,
     "imageUrl": "https://picsum.photos/seed/monitorstand/400/300",
     "category": "Office",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1018": {
     "id": "p-1018",
     "name": "Gaming Headset",
     "description": "Immerse yourself in your favorite games with this wired surround sound gaming headset, complete with an integrated microphone. Surround sound helps create a more engaging audio environment, allowing gameplay effects, dialogue, and communication to feel more present. The wired connection provides a direct setup for compatible gaming equipment without requiring separate wireless pairing. The built-in microphone supports team communication, online multiplayer sessions, and voice conversations. Use it for gaming, online chat, or other computer-based entertainment. With its dedicated gaming design and convenient microphone, this headset is a practical choice for players seeking focused audio and clear communication during extended sessions.",
-    "price": 54.90,
+    "price": 54.9,
     "imageUrl": "https://picsum.photos/seed/gamingheadset/400/300",
     "category": "Gaming",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1019": {
     "id": "p-1019",
     "name": "Adjustable Dumbbells Set",
     "description": "Build a flexible home workout area with this compact set of adjustable dumbbells. The adjustable design allows you to vary the weight according to different exercises, training goals, or fitness levels without requiring a large collection of individual weights. Their compact format helps conserve space in apartments, home gyms, and workout corners. Use them for strength training, conditioning routines, general fitness, or targeted exercises. They are convenient for people who want accessible equipment without filling their exercise area with bulky gear. This dumbbell set brings practical versatility to home workouts and makes it easier to maintain a consistent training routine.",
-    "price": 149.00,
+    "price": 149.0,
     "imageUrl": "https://picsum.photos/seed/dumbbells/400/300",
     "category": "Fitness",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1020": {
     "id": "p-1020",
@@ -168,25 +186,28 @@
     "price": 34.99,
     "imageUrl": "https://picsum.photos/seed/hub/400/300",
     "category": "Accessories",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1021": {
     "id": "p-1021",
     "name": "Digital SLR Camera",
     "description": "Capture detailed photographs with this 24.1 MP digital SLR camera, supplied with an EF-S 18-55mm lens. The versatile lens range is suitable for everyday photography, portraits, travel scenes, family moments, and creative experimentation. Its DSLR format gives photographers a dedicated camera experience with hands-on control and a comfortable way to explore composition. The 24.1 MP resolution provides a detailed foundation for sharing, editing, and preserving images. Whether you are developing your photography skills or upgrading from a basic camera, this kit offers a practical starting point for learning, creating, and documenting memorable moments with greater control.",
-    "price": 499.00,
+    "price": 499.0,
     "imageUrl": "https://picsum.photos/seed/camera/400/300",
     "category": "Photography",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1022": {
     "id": "p-1022",
     "name": "Smart Thermostat",
     "description": "Manage your home heating and cooling routine with this programmable Wi-Fi smart thermostat. Its connected design allows it to fit into a modern smart-home environment, while programmable controls help organize temperature preferences around your daily schedule. Use it to create a more convenient household routine and support mindful home energy use. The thermostat can be a practical choice for living rooms, bedrooms, offices, and other indoor spaces with compatible heating or cooling systems. With Wi-Fi connectivity and programmable functionality, it offers a convenient way to bring greater control and organization to everyday home climate management.",
-    "price": 159.00,
+    "price": 159.0,
     "imageUrl": "https://picsum.photos/seed/thermostat/400/300",
     "category": "Home",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1023": {
     "id": "p-1023",
@@ -195,7 +216,8 @@
     "price": 69.99,
     "imageUrl": "https://picsum.photos/seed/tablet/400/300",
     "category": "Office",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1024": {
     "id": "p-1024",
@@ -204,16 +226,18 @@
     "price": 279.99,
     "imageUrl": "https://picsum.photos/seed/standingdesk/400/300",
     "category": "Office",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1025": {
     "id": "p-1025",
     "name": "Bluetooth Earbuds",
     "description": "Enjoy portable listening with these true wireless in-ear earbuds, supplied with a convenient charging case. Their compact design makes them easy to carry for commuting, exercise, travel, calls, and everyday entertainment. Bluetooth connectivity provides a cable-free listening experience, while the in-ear format is designed to fit neatly into your daily routine. Keep the earbuds protected and ready for use with the included charging case. They are suitable for music, podcasts, videos, and compatible voice calls wherever you go. Combining wireless freedom, a compact form, and practical charging convenience, these earbuds are a useful companion for active and mobile lifestyles.",
-    "price": 45.00,
+    "price": 45.0,
     "imageUrl": "https://picsum.photos/seed/earbuds/400/300",
     "category": "Audio",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1026": {
     "id": "p-1026",
@@ -222,16 +246,18 @@
     "price": 109.99,
     "imageUrl": "https://picsum.photos/seed/harddrive/400/300",
     "category": "Storage",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1027": {
     "id": "p-1027",
     "name": "Mini Video Projector",
     "description": "Turn different spaces into personal viewing areas with this portable home theater projector, which supports Full HD content. Its mini format makes it convenient to move between rooms or take along for flexible entertainment setups. Use it for movies, shows, presentations, photo sharing, or casual gaming when a larger projected image is preferred. The portable design is suitable for bedrooms, living rooms, offices, classrooms, and travel arrangements. Whether you are planning a movie night or need a convenient presentation display, this projector offers a compact way to enjoy larger-format content without relying on a permanent installation.",
-    "price": 89.00,
+    "price": 89.0,
     "imageUrl": "https://picsum.photos/seed/projector/400/300",
     "category": "Home",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1028": {
     "id": "p-1028",
@@ -240,34 +266,38 @@
     "price": 39.99,
     "imageUrl": "https://picsum.photos/seed/gamingmouse/400/300",
     "category": "Gaming",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1029": {
     "id": "p-1029",
     "name": "Foldable Yoga Mat",
     "description": "Support your home or travel fitness routine with this foldable yoga mat, featuring a non-slip texture and carrying strap. The folding design makes it convenient to store in a closet, take to classes, or transport between locations. Its textured surface is intended to provide a more secure foundation during stretching, yoga, mobility exercises, and general floor workouts. The included carrying strap adds practical portability when moving the mat from room to room or taking it outdoors. Whether you are practicing at home, traveling, or attending a fitness session, this mat offers a convenient combination of comfort, grip, and easy transportation.",
-    "price": 22.00,
+    "price": 22.0,
     "imageUrl": "https://picsum.photos/seed/yogamat/400/300",
     "category": "Fitness",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1030": {
     "id": "p-1030",
     "name": "Laptop Cooling Pad",
     "description": "Help support your laptop workspace with this slim cooling stand equipped with five quiet fans. Its low-profile design fits easily beneath a laptop while helping create a more elevated and organized setup. The quiet fan arrangement is suitable for offices, study areas, gaming desks, and other environments where excessive noise can be distracting. Use it during everyday computing, extended work sessions, entertainment, or gaming to add a dedicated cooling accessory to your workstation. The compact shape is easy to store or carry when needed. Combining a slim stand with multiple quiet fans, this cooling pad is a practical laptop companion.",
-    "price": 27.50,
+    "price": 27.5,
     "imageUrl": "https://picsum.photos/seed/coolingpad/400/300",
     "category": "Accessories",
-    "inStock": false
+    "inStock": false,
+    "featured": false
   },
   "p-1031": {
     "id": "p-1031",
     "name": "3-Axis Gimbal Stabilizer",
     "description": "Create smoother smartphone video with this handheld three-axis gimbal stabilizer. Designed for smartphone video recording, it helps provide a more controlled filming experience while you capture walks, events, travel moments, demonstrations, and creative projects. The handheld format makes it convenient to carry and use in different locations, from everyday scenes to planned content sessions. It can be a useful addition for vloggers, social media creators, travelers, students, and anyone who wants a steadier approach to mobile video. Bring greater control to your smartphone footage with a portable stabilizing tool designed for flexible handheld recording.",
-    "price": 99.00,
+    "price": 99.0,
     "imageUrl": "https://picsum.photos/seed/gimbal/400/300",
     "category": "Photography",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1032": {
     "id": "p-1032",
@@ -276,7 +306,8 @@
     "price": 18.99,
     "imageUrl": "https://picsum.photos/seed/smartplug/400/300",
     "category": "Home",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1033": {
     "id": "p-1033",
@@ -285,16 +316,18 @@
     "price": 64.99,
     "imageUrl": "https://picsum.photos/seed/essd/400/300",
     "category": "Storage",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1034": {
     "id": "p-1034",
     "name": "Active Noise-Canceling Earbuds",
     "description": "Enjoy personal audio with these in-ear wireless earbuds featuring a smart active noise-canceling mode. Their compact design makes them suitable for commuting, travel, work, exercise, and everyday listening. Wireless connectivity provides freedom from cables, while the in-ear format keeps the earbuds convenient to carry and use throughout the day. The smart ANC mode is designed to help manage surrounding sound when you want greater focus on music, podcasts, calls, or videos. Whether you are relaxing at home or moving through a busy environment, these earbuds combine portability, wireless convenience, and noise-control functionality in a compact listening solution.",
-    "price": 89.90,
+    "price": 89.9,
     "imageUrl": "https://picsum.photos/seed/ancearbuds/400/300",
     "category": "Audio",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1035": {
     "id": "p-1035",
@@ -303,16 +336,18 @@
     "price": 29.99,
     "imageUrl": "https://picsum.photos/seed/footrest/400/300",
     "category": "Office",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1036": {
     "id": "p-1036",
     "name": "Gaming RGB Mousepad",
     "description": "Create a broader and more coordinated gaming surface with this large extended keyboard and mouse mat. The generous design provides room for both your keyboard and mouse while helping keep them positioned on one consistent surface. LED edges add colorful lighting to your desk and complement RGB gaming equipment. Use it for gaming, browsing, creative work, or general computer use when you prefer additional room for mouse movement. The extended format also helps bring visual consistency to your workstation. Combining practical coverage with an illuminated design, this mousepad is a useful and stylish accessory for gaming and desktop setups.",
-    "price": 21.50,
+    "price": 21.5,
     "imageUrl": "https://picsum.photos/seed/mousepad/400/300",
     "category": "Gaming",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1037": {
     "id": "p-1037",
@@ -321,16 +356,18 @@
     "price": 25.99,
     "imageUrl": "https://picsum.photos/seed/resistancebands/400/300",
     "category": "Fitness",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1038": {
     "id": "p-1038",
     "name": "Ring Light with Tripod Stand",
     "description": "Improve your lighting for video calls, streaming, photographs, and content creation with this 10-inch desktop LED ring light. The circular design provides a focused source of light for your face or subject, while the tripod stand makes it convenient to position on a desk. Its compact size works well in home offices, bedrooms, creator spaces, and small recording areas. Use it for online meetings, tutorials, livestreams, product demonstrations, or personal videos. The desktop format keeps the setup easy to arrange and store. This ring light combines practical illumination with a convenient stand for everyday visual content.",
-    "price": 32.00,
+    "price": 32.0,
     "imageUrl": "https://picsum.photos/seed/ringlight/400/300",
     "category": "Photography",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1039": {
     "id": "p-1039",
@@ -339,7 +376,8 @@
     "price": 129.99,
     "imageUrl": "https://picsum.photos/seed/doorbell/400/300",
     "category": "Home",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   },
   "p-1040": {
     "id": "p-1040",
@@ -348,6 +386,7 @@
     "price": 16.99,
     "imageUrl": "https://picsum.photos/seed/deskpad/400/300",
     "category": "Office",
-    "inStock": true
+    "inStock": true,
+    "featured": false
   }
 }

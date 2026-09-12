@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getProducts } from '../api'
+import { getFeaturedProducts } from '../api'
 import { ProductCard } from '../components/ProductCard'
 import { useBasket } from '../context/BasketContext'
 import type { Product } from '../types'
-
-const DEFAULT_PRODUCTS_LIST_SIZE = 8;
 
 export function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -13,7 +11,7 @@ export function HomePage() {
   const { addItem } = useBasket()
 
   useEffect(() => {
-    getProducts({ page: 0, size: DEFAULT_PRODUCTS_LIST_SIZE })
+    getFeaturedProducts()
       .then((data) => setProducts(data))
       .catch((err: unknown) => {
         const message = err instanceof Error ? err.message : 'Failed to load products'

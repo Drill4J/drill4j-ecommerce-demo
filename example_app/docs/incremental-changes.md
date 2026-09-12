@@ -186,7 +186,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** [1) Browse and discover products](user-flows.md#1-browse-and-discover-products)
 - **Touches:** backend, frontend
-- **Status:** planned
+- **Status:** done
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|

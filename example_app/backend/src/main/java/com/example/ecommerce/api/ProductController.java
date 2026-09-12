@@ -17,6 +17,13 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @GetMapping("/featured")
+    public List<ProductResponse> listFeaturedProducts() {
+        return productService.listFeatured().stream()
+                .map(ProductController::toResponse)
+                .toList();
+    }
+
     @GetMapping("/{productId}")
     public ProductResponse getProduct(@PathVariable String productId) {
         return toResponse(productService.getProductById(productId));

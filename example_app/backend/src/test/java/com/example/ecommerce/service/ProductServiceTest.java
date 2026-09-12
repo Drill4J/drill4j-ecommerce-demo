@@ -186,8 +186,29 @@ public class ProductServiceTest {
         assertThat(page1.get(0).id()).isEqualTo("p-g6");
     }
 
+    @Test
+    void listFeaturedShouldReturnOnlyFeaturedProducts() throws Exception {
+        Map<String, Product> catalog = new java.util.HashMap<>();
+        catalog.put("p-f2", featuredProduct("p-f2", "Headset"));
+        catalog.put("p-n1", product("p-n1", "Cable", "Accessories"));
+        catalog.put("p-f1", featuredProduct("p-f1", "Pad"));
+        catalog.put("p-n2", product("p-n2", "Mouse", "Accessories"));
+        generatedProducts = catalog;
+        when(objectMapper.readValue(any(InputStream.class), any(TypeReference.class)))
+                .thenReturn(generatedProducts);
+        productService.init();
+
+        List<Product> featured = productService.listFeatured();
+        assertThat(featured).extracting(Product::id).containsExactly("p-f1", "p-f2");
+        assertThat(featured).allMatch(Product::featured);
+    }
+
     private static Product product(String id, String name, String category) {
         return new Product(id, name, "Desc", BigDecimal.TEN, "url", category, true);
+    }
+
+    private static Product featuredProduct(String id, String name) {
+        return new Product(id, name, "Desc", BigDecimal.TEN, "url", "Featured", true, true);
     }
 
     private Map<String, Product> createMockProductsMap() {

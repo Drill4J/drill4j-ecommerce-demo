@@ -49,4 +49,20 @@ class ProductControllerWebMvcTest {
                 .andExpect(jsonPath("$[0].category").value("Gaming"))
                 .andExpect(jsonPath("$[0].name").value("Pad"));
     }
+
+    @Test
+    void listFeaturedProductsShouldReturnNonEmptyPayload() throws Exception {
+        when(productService.listFeatured())
+                .thenReturn(List.of(
+                        new Product("p-1001", "Pad", "Desc", new BigDecimal("19.99"), "img", "Gaming", true, true),
+                        new Product("p-1002", "Headset", "Desc", new BigDecimal("49.99"), "img", "Audio", true, true)
+                ));
+
+        mockMvc.perform(get("/api/v1/products/featured"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andExpect(jsonPath("$[0].id").value("p-1001"))
+                .andExpect(jsonPath("$[1].id").value("p-1002"));
+    }
 }

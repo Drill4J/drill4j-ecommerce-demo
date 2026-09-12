@@ -216,6 +216,7 @@ Expected result:
 - Minimum order amount: implemented ([C9](incremental-changes.md#c9-minimum-order-amount)).
 - Change password: implemented ([C10](incremental-changes.md#c10-change-account-password)); stricter signup rules feature+unit+api done ([C11](incremental-changes.md#c11-stricter-signup-passwordemail-rules)).
 - Wishlist: implemented ([C12](incremental-changes.md#c12-wishlist)).
+- Featured products endpoint: implemented ([C13](incremental-changes.md#c13-featured-products-endpoint)).
 
 ## Mobile parity checklist
 

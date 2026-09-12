@@ -53,6 +53,16 @@ public class ProductService {
     }
 
     /**
+     * Returns products flagged as featured, sorted by id.
+     */
+    public List<Product> listFeatured() {
+        return products.values().stream()
+                .filter(Product::featured)
+                .sorted(Comparator.comparing(Product::id))
+                .toList();
+    }
+
+    /**
      * Lists paginated products sorted consistently by their ID.
      *
      * @param page Zero-based page index (0, 1, 2...)

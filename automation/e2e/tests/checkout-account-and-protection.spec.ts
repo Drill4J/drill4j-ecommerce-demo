@@ -264,4 +264,25 @@ test.describe('Checkout, account, and access rules', () => {
     await expect(page.getByText(/CANCELLED ·/)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Cancel order' })).toHaveCount(0);
   });
+
+  test('C8 Reorder in-stock order updates basket', async ({ page }, testInfo) => {
+    const user = createUniqueUser(testInfo);
+    await signUp(page, user);
+    await placeOrderViaUi(page, {
+      fullName: 'C8 Reorder Buyer',
+      phoneNumber: '+1-555-800-800',
+      addressLine: 'Reorder Rd 8',
+      city: 'Austin',
+      postalCode: '73301',
+    });
+
+    await page.getByRole('link', { name: new RegExp(user.email) }).click();
+    await expect(page.getByRole('heading', { name: 'Your orders' })).toBeVisible();
+    await page.getByRole('button', { name: 'Reorder' }).click();
+    await expect(page.getByText(/Reordered into basket/i)).toBeVisible();
+
+    await openBasket(page);
+    await expect(page.getByText('Your basket is empty.')).toHaveCount(0);
+    await expect(page.locator('.list-row')).toHaveCount(1);
+  });
 });

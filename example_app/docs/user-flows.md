@@ -214,7 +214,7 @@ Expected result:
 - Order cancellation: implemented ([C7](incremental-changes.md#c7-cancel-placed-cod-order)).
 - Reorder: implemented ([C8](incremental-changes.md#c8-reorder-from-order-history)).
 - Minimum order amount: implemented ([C9](incremental-changes.md#c9-minimum-order-amount)).
-- Change password: planned ([C10](incremental-changes.md#c10-change-account-password), [C11](incremental-changes.md#c11-stricter-signup-passwordemail-rules)).
+- Change password: implemented ([C10](incremental-changes.md#c10-change-account-password)); stricter signup rules planned ([C11](incremental-changes.md#c11-stricter-signup-passwordemail-rules)).
 - Wishlist: planned ([C12](incremental-changes.md#c12-wishlist)).
 
 ## Mobile parity checklist

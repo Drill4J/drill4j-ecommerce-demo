@@ -1,6 +1,7 @@
 package com.example.auth.api;
 
 import com.example.auth.api.model.AuthResponse;
+import com.example.auth.api.model.ChangePasswordRequest;
 import com.example.auth.api.model.SignInRequest;
 import com.example.auth.api.model.SignUpRequest;
 import com.example.auth.api.model.VerifyResponse;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -56,6 +58,28 @@ public class AuthController {
         } catch (Exception ex) {
             throw new UnauthorizedException("Invalid or expired token");
         }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Map<String, String>> changePassword(
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+            @Valid @RequestBody ChangePasswordRequest req
+    ) {
+        String token = extractBearerToken(authorizationHeader);
+        JwtService.JwtPrincipal principal;
+        try {
+            principal = jwtService.verifyToken(token);
+        } catch (Exception ex) {
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
+        authService.changePassword(
+                principal.userId(),
+                principal.email(),
+                req.currentPassword(),
+                req.newPassword()
+        );
+        return ResponseEntity.ok(Map.of("status", "ok"));
     }
 
     private ResponseCookie accessTokenCookie(String token) {

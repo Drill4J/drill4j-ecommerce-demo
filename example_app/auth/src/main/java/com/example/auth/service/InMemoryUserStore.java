@@ -23,6 +23,23 @@ public class InMemoryUserStore {
         return byEmail.containsKey(normalizeEmail(email));
     }
 
+    public Optional<User> findById(String userId) {
+        if (userId == null || userId.isBlank()) {
+            return Optional.empty();
+        }
+        return byEmail.values().stream()
+                .filter(user -> userId.equals(user.id()))
+                .findFirst();
+    }
+
+    public User updatePassword(String userId, String newPasswordHash) {
+        User existing = findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        User updated = new User(existing.id(), existing.email(), newPasswordHash);
+        byEmail.put(normalizeEmail(updated.email()), updated);
+        return updated;
+    }
+
     private String normalizeEmail(String email) {
         return email == null ? "" : email.trim().toLowerCase();
     }

@@ -205,3 +205,12 @@ export function signIn(email: string, password: string): Promise<AuthResponse> {
     body: JSON.stringify({ email, password }),
   })
 }
+
+export function changePassword(currentPassword: string, newPassword: string): Promise<{ status: string }> {
+  return fetchJson<{ status: string }>('/change-password', {
+    baseUrl: AUTH_BASE_URL,
+    method: 'POST',
+    includeAuth: true,
+    body: JSON.stringify({ currentPassword, newPassword }),
+  })
+}

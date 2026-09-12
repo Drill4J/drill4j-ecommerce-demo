@@ -31,4 +31,20 @@ class AuthServiceTest {
         assertThat(result.userId()).isNotBlank();
         assertThat(result.token()).isNotBlank();
     }
+
+    @Test
+    void changePasswordShouldSucceedWithValidCurrentPassword() {
+        AuthService.AuthResult signedUp = authService.signUp("c10-unit@example.com", "old-password");
+
+        authService.changePassword(
+                signedUp.userId(),
+                signedUp.email(),
+                "old-password",
+                "P@ssw0rd_123!"
+        );
+
+        AuthService.AuthResult signedIn = authService.signIn("c10-unit@example.com", "P@ssw0rd_123!");
+        assertThat(signedIn.userId()).isEqualTo(signedUp.userId());
+        assertThat(signedIn.token()).isNotBlank();
+    }
 }

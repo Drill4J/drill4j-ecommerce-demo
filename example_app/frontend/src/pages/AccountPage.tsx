@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { cancelOrder, createAddress, getAddresses, getOrders, reorderOrder } from '../api'
+import { Link, useNavigate } from 'react-router-dom'
+import { cancelOrder, changePassword, createAddress, getAddresses, getOrders, reorderOrder } from '../api'
 import { useAuth } from '../context/AuthContext'
 import { useBasket } from '../context/BasketContext'
 import type { Order, SavedAddress, ShippingInfo } from '../types'
@@ -15,7 +15,8 @@ const emptyAddress: ShippingInfo = {
 }
 
 export function AccountPage() {
-  const { user } = useAuth()
+  const navigate = useNavigate()
+  const { user, signOut } = useAuth()
   const { refreshBasket } = useBasket()
   const [orders, setOrders] = useState<Order[]>([])
   const [addresses, setAddresses] = useState<SavedAddress[]>([])
@@ -29,6 +30,10 @@ export function AccountPage() {
   const [addressError, setAddressError] = useState('')
   const [addressMessage, setAddressMessage] = useState('')
   const [orderMessage, setOrderMessage] = useState('')
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [changingPassword, setChangingPassword] = useState(false)
+  const [passwordError, setPasswordError] = useState('')
 
   useEffect(() => {
     setLoading(true)
@@ -66,6 +71,22 @@ export function AccountPage() {
       setAddressError(message)
     } finally {
       setSavingAddress(false)
+    }
+  }
+
+  const handleChangePassword = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setPasswordError('')
+    setChangingPassword(true)
+    try {
+      await changePassword(currentPassword, newPassword)
+      signOut()
+      navigate('/signin', { replace: true })
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to change password'
+      setPasswordError(message)
+    } finally {
+      setChangingPassword(false)
     }
   }
 
@@ -116,6 +137,36 @@ export function AccountPage() {
           <strong>Email:</strong> {user?.email ?? '—'}
         </p>
       </div>
+
+      <h2>Change password</h2>
+      {passwordError && <p className="error">{passwordError}</p>}
+      <form className="card form" onSubmit={(event) => void handleChangePassword(event)}>
+        <label>
+          Current password
+          <input
+            className="input"
+            required
+            type="password"
+            autoComplete="current-password"
+            value={currentPassword}
+            onChange={(event) => setCurrentPassword(event.target.value)}
+          />
+        </label>
+        <label>
+          New password
+          <input
+            className="input"
+            required
+            type="password"
+            autoComplete="new-password"
+            value={newPassword}
+            onChange={(event) => setNewPassword(event.target.value)}
+          />
+        </label>
+        <button className="button" type="submit" disabled={changingPassword}>
+          {changingPassword ? 'Changing...' : 'Change password'}
+        </button>
+      </form>
 
       <h2>Saved shipping addresses</h2>
       {addressError && <p className="error">{addressError}</p>}

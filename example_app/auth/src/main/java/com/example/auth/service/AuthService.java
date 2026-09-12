@@ -59,6 +59,32 @@ public class AuthService {
         return new AuthResult(user.id(), user.email(), token);
     }
 
+    public void changePassword(String userId, String email, String currentPassword, String newPassword) {
+        if (userId == null || userId.isBlank()) {
+            throw new BadRequestException("User id is required");
+        }
+        if (currentPassword == null || currentPassword.isBlank()) {
+            throw new BadRequestException("Current password is required");
+        }
+        if (newPassword == null || newPassword.isBlank()) {
+            throw new BadRequestException("New password is required");
+        }
+        if (currentPassword.equals(newPassword)) {
+            throw new BadRequestException("New password must be different from the current password");
+        }
+        PasswordPolicy.validate(newPassword);
+
+        var user = userStore.findById(userId)
+                .or(() -> userStore.findByEmail(normalizeEmail(email)))
+                .orElseThrow(() -> new BadRequestException("User not found"));
+
+        if (!passwordEncoder.matches(currentPassword, user.passwordHash())) {
+            throw new BadRequestException("Current password is incorrect");
+        }
+
+        userStore.updatePassword(user.id(), passwordEncoder.encode(newPassword));
+    }
+
     private String normalizeEmail(String email) {
         return email == null ? "" : email.trim().toLowerCase();
     }

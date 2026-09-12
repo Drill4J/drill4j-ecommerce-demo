@@ -213,7 +213,7 @@ Expected result:
 - Saved shipping addresses: implemented ([C6](incremental-changes.md#c6-saved-shipping-addresses)).
 - Order cancellation: implemented ([C7](incremental-changes.md#c7-cancel-placed-cod-order)).
 - Reorder: implemented ([C8](incremental-changes.md#c8-reorder-from-order-history)).
-- Minimum order amount: planned ([C9](incremental-changes.md#c9-minimum-order-amount)).
+- Minimum order amount: implemented ([C9](incremental-changes.md#c9-minimum-order-amount)).
 - Change password: planned ([C10](incremental-changes.md#c10-change-account-password), [C11](incremental-changes.md#c11-stricter-signup-passwordemail-rules)).
 - Wishlist: planned ([C12](incremental-changes.md#c12-wishlist)).
 
@@ -232,6 +232,6 @@ Expected result:
 - Saved shipping addresses: implemented ([C6](incremental-changes.md#c6-saved-shipping-addresses)).
 - Order cancellation: implemented ([C7](incremental-changes.md#c7-cancel-placed-cod-order)).
 - Reorder: planned ([C8](incremental-changes.md#c8-reorder-from-order-history)).
-- Minimum order amount: planned ([C9](incremental-changes.md#c9-minimum-order-amount)).
+- Minimum order amount: implemented ([C9](incremental-changes.md#c9-minimum-order-amount)).
 - Change password: planned ([C10](incremental-changes.md#c10-change-account-password), [C11](incremental-changes.md#c11-stricter-signup-passwordemail-rules)).
 - Wishlist: planned ([C12](incremental-changes.md#c12-wishlist)).

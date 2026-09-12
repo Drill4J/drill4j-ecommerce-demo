@@ -34,6 +34,7 @@ public class OrderService {
     private final BasketService basketService;
     private final PromoService promoService;
     private final DeliveryFeeService deliveryFeeService;
+    private final MinOrderService minOrderService;
     private final ProductService productService;
     private final Clock clock;
     private final ConcurrentHashMap<String, Map<String, Order>> ordersByUserId = new ConcurrentHashMap<>();
@@ -43,21 +44,24 @@ public class OrderService {
             BasketService basketService,
             PromoService promoService,
             DeliveryFeeService deliveryFeeService,
+            MinOrderService minOrderService,
             ProductService productService
     ) {
-        this(basketService, promoService, deliveryFeeService, productService, Clock.systemUTC());
+        this(basketService, promoService, deliveryFeeService, minOrderService, productService, Clock.systemUTC());
     }
 
     OrderService(
             BasketService basketService,
             PromoService promoService,
             DeliveryFeeService deliveryFeeService,
+            MinOrderService minOrderService,
             ProductService productService,
             Clock clock
     ) {
         this.basketService = basketService;
         this.promoService = promoService;
         this.deliveryFeeService = deliveryFeeService;
+        this.minOrderService = minOrderService;
         this.productService = productService;
         this.clock = clock;
     }
@@ -73,12 +77,14 @@ public class OrderService {
         AppliedPromo appliedPromo = promoService.apply(promoCode, subtotal);
         BigDecimal merchandiseTotal = subtotal.subtract(appliedPromo.discountAmount());
         BigDecimal deliveryFee = deliveryFeeService.calculateFee(shippingInfo.city(), merchandiseTotal);
+        BigDecimal totalAmount = merchandiseTotal.add(deliveryFee);
+        minOrderService.ensureMeetsMinimum(totalAmount);
         return new Order(
                 "preview",
                 ORDER_STATUS_PLACED_COD,
                 shippingInfo,
                 items,
-                merchandiseTotal.add(deliveryFee),
+                totalAmount,
                 PAYMENT_METHOD_COD,
                 appliedPromo.code(),
                 appliedPromo.discountAmount(),
@@ -103,13 +109,15 @@ public class OrderService {
         AppliedPromo appliedPromo = promoService.apply(promoCode, subtotal);
         BigDecimal merchandiseTotal = subtotal.subtract(appliedPromo.discountAmount());
         BigDecimal deliveryFee = deliveryFeeService.calculateFee(shippingInfo.city(), merchandiseTotal);
+        BigDecimal totalAmount = merchandiseTotal.add(deliveryFee);
+        minOrderService.ensureMeetsMinimum(totalAmount);
         String orderId = UUID.randomUUID().toString();
         Order order = new Order(
                 orderId,
                 ORDER_STATUS_PLACED_COD,
                 shippingInfo,
                 items,
-                merchandiseTotal.add(deliveryFee),
+                totalAmount,
                 PAYMENT_METHOD_COD,
                 appliedPromo.code(),
                 appliedPromo.discountAmount(),

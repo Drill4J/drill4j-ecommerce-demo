@@ -5,6 +5,7 @@ import com.example.ecommerce.domain.Order;
 import com.example.ecommerce.domain.Product;
 import com.example.ecommerce.domain.ReorderResult;
 import com.example.ecommerce.domain.ShippingInfo;
+import com.example.ecommerce.web.BadRequestException;
 import com.example.ecommerce.web.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -36,6 +37,7 @@ class OrderServiceTest {
                 basketService,
                 new PromoService(),
                 new DeliveryFeeService(),
+                new MinOrderService(),
                 productService
         );
     }
@@ -133,6 +135,32 @@ class OrderServiceTest {
         assertThat(cancelled.status()).isEqualTo(OrderService.ORDER_STATUS_CANCELLED);
         assertThat(orderService.getOrder(USER_ID, placed.id()).status())
                 .isEqualTo(OrderService.ORDER_STATUS_CANCELLED);
+    }
+
+    @Test
+    void previewOrderShouldRejectWhenTotalBelowMinimum() {
+        ShippingInfo shippingInfo = shippingInfo();
+        List<BasketItem> items = List.of(new BasketItem(product("p-1040", "16.99"), 1));
+        when(basketService.snapshotItems(USER_ID)).thenReturn(items);
+        when(basketService.calculateSubtotal(USER_ID)).thenReturn(new BigDecimal("16.99"));
+
+        assertThatThrownBy(() -> orderService.previewOrder(USER_ID, shippingInfo))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("Order total is below the minimum of " + MinOrderService.MIN_ORDER_AMOUNT);
+    }
+
+    @Test
+    void placeOrderShouldAllowWhenTotalAtOrAboveMinimum() {
+        ShippingInfo shippingInfo = shippingInfo();
+        List<BasketItem> items = List.of(new BasketItem(product("p-1001", "24.99", true), 1));
+        when(basketService.snapshotItems(USER_ID)).thenReturn(items);
+        when(basketService.calculateSubtotal(USER_ID)).thenReturn(new BigDecimal("24.99"));
+
+        Order placed = orderService.placeOrder(USER_ID, shippingInfo);
+
+        assertThat(placed.totalAmount()).isEqualByComparingTo("29.99");
+        assertThat(placed.totalAmount()).isGreaterThanOrEqualTo(MinOrderService.MIN_ORDER_AMOUNT);
+        verify(basketService).clear(USER_ID);
     }
 
     @Test

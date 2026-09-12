@@ -138,7 +138,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** [12) Minimum order amount](user-flows.md#12-minimum-order-amount)
 - **Touches:** backend
-- **Status:** planned
+- **Status:** done (no e2e)
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|

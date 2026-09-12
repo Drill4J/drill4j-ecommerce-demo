@@ -226,6 +226,75 @@ class OrderFlowIntegrationTest {
     }
 
     @Test
+    void previewBelowMinimumShouldReturnBadRequest() throws Exception {
+        AuthPrincipal minUser = new AuthPrincipal("u-min-below", "min-below@example.com");
+        when(authClient.verify(anyString())).thenReturn(minUser);
+
+        mockMvc.perform(post("/api/v1/basket/items")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "productId": "p-1040",
+                                  "quantity": 1
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/v1/checkout/preview")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "shippingInfo": {
+                                    "fullName": "Jane Doe",
+                                    "phoneNumber": "+1-555-100-100",
+                                    "addressLine": "Main street 10",
+                                    "city": "Austin",
+                                    "postalCode": "73301"
+                                  }
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Order total is below the minimum of 25.00"));
+    }
+
+    @Test
+    void placeAboveMinimumShouldSucceed() throws Exception {
+        AuthPrincipal minUser = new AuthPrincipal("u-min-above", "min-above@example.com");
+        when(authClient.verify(anyString())).thenReturn(minUser);
+
+        mockMvc.perform(post("/api/v1/basket/items")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "productId": "p-1001",
+                                  "quantity": 1
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/v1/orders")
+                        .header("Authorization", "Bearer test")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "shippingInfo": {
+                                    "fullName": "Jane Doe",
+                                    "phoneNumber": "+1-555-100-100",
+                                    "addressLine": "Main street 10",
+                                    "city": "Austin",
+                                    "postalCode": "73301"
+                                  }
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("PLACED_COD"))
+                .andExpect(jsonPath("$.totalAmount").value(29.99));
+    }
+
+    @Test
     void shouldUpdateBasketQuantity() throws Exception {
         when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
 

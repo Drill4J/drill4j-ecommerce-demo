@@ -174,7 +174,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** [14) Wishlist (save for later)](user-flows.md#14-wishlist-save-for-later)
 - **Touches:** backend, frontend
-- **Status:** feature+unit+api done
+- **Status:** done
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|

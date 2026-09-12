@@ -33,6 +33,15 @@ export type ReorderResult = Basket & {
   skippedProductIds: string[]
 }
 
+export type WishlistItem = {
+  productId: string
+  productName: string
+  unitPrice: number
+  imageUrl: string
+  category: string
+  inStock: boolean
+}
+
 export type ShippingInfo = {
   fullName: string
   phoneNumber: string

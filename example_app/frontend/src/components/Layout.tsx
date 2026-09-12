@@ -16,6 +16,7 @@ export function Layout() {
           <nav className="nav-links">
             <Link to="/">Home</Link>
             <Link to="/products">Products</Link>
+            <Link to="/wishlist">Wishlist</Link>
             <Link to="/basket">Basket ({basket.totalItems})</Link>
             {isAuthenticated ? (
               <>

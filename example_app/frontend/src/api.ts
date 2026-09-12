@@ -1,4 +1,4 @@
-import type {Basket, CheckoutPreview, Order, PageParams, Product, ReorderResult, SavedAddress, ShippingInfo} from './types'
+import type {Basket, CheckoutPreview, Order, PageParams, Product, ReorderResult, SavedAddress, ShippingInfo, WishlistItem} from './types'
 import { getCookie } from './auth/cookies'
 
 // In production (nginx), the UI must call same-origin:
@@ -146,6 +146,22 @@ export function placeOrder(
 
 export function getAddresses(): Promise<SavedAddress[]> {
   return fetchJson<SavedAddress[]>('/addresses', { includeAuth: true })
+}
+
+export function getWishlist(): Promise<WishlistItem[]> {
+  return fetchJson<WishlistItem[]>('/wishlist', { includeAuth: true })
+}
+
+export function addWishlistItem(productId: string): Promise<WishlistItem> {
+  return fetchJson<WishlistItem>('/wishlist/items', {
+    method: 'POST',
+    includeAuth: true,
+    body: JSON.stringify({ productId }),
+  })
+}
+
+export async function removeWishlistItem(productId: string): Promise<void> {
+  await fetchJson<void>(`/wishlist/items/${productId}`, { method: 'DELETE', includeAuth: true })
 }
 
 export function createAddress(

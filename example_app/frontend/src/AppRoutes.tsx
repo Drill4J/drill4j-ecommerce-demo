@@ -10,6 +10,7 @@ import { ProductDetailsPage } from './pages/ProductDetailsPage'
 import { ProductListPage } from './pages/ProductListPage'
 import { SignInPage } from './pages/SignInPage'
 import { SignUpPage } from './pages/SignUpPage'
+import { WishlistPage } from './pages/WishlistPage'
 
 export function AppRoutes() {
   return (
@@ -25,6 +26,14 @@ export function AppRoutes() {
           element={
             <RequireAuth>
               <AccountPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="wishlist"
+          element={
+            <RequireAuth>
+              <WishlistPage />
             </RequireAuth>
           }
         />

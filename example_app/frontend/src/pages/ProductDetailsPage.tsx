@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { getProduct } from '../api'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { addWishlistItem, getProduct } from '../api'
+import { useAuth } from '../context/AuthContext'
 import { useBasket } from '../context/BasketContext'
 import type { Product } from '../types'
 import { formatCurrency } from '../utils'
@@ -10,7 +11,11 @@ export function ProductDetailsPage() {
   const [product, setProduct] = useState<Product | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [error, setError] = useState('')
+  const [wishlistMessage, setWishlistMessage] = useState('')
   const { addItem } = useBasket()
+  const { isAuthenticated } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     if (!productId) {
@@ -27,6 +32,22 @@ export function ProductDetailsPage() {
   const handleAddToBasket = () => {
     if (!product) return
     void addItem(product.id, quantity)
+  }
+
+  const handleAddToWishlist = async () => {
+    if (!product) return
+    if (!isAuthenticated) {
+      navigate('/signin', { replace: true, state: { from: location.pathname } })
+      return
+    }
+    try {
+      setWishlistMessage('')
+      await addWishlistItem(product.id)
+      setWishlistMessage('Added to wishlist')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to add to wishlist'
+      setWishlistMessage(message)
+    }
   }
 
   if (error) {
@@ -63,9 +84,15 @@ export function ProductDetailsPage() {
             />
           </div>
 
-          <button className="button" onClick={handleAddToBasket}>
-            Add to basket
-          </button>
+          <div className="row">
+            <button className="button" onClick={handleAddToBasket}>
+              Add to basket
+            </button>
+            <button className="button secondary" onClick={() => void handleAddToWishlist()}>
+              Add to wishlist
+            </button>
+          </div>
+          {wishlistMessage ? <p className="muted">{wishlistMessage}</p> : null}
         </div>
       </div>
     </section>

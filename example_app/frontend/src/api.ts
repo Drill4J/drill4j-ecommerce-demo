@@ -170,6 +170,13 @@ export function getOrders(): Promise<Order[]> {
   return fetchJson<Order[]>('/orders', { includeAuth: true })
 }
 
+export function cancelOrder(orderId: string): Promise<Order> {
+  return fetchJson<Order>(`/orders/${orderId}/cancel`, {
+    method: 'POST',
+    includeAuth: true,
+  })
+}
+
 export type AuthResponse = {
   userId: string
   email: string

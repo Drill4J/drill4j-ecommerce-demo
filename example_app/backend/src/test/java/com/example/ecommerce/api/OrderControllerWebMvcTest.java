@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -61,8 +62,8 @@ class OrderControllerWebMvcTest {
                 OrderService.PAYMENT_METHOD_COD,
                 null,
                 BigDecimal.ZERO,
-                new BigDecimal("5.00")
-        );
+                new BigDecimal("5.00"),
+                null);
         when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
         when(orderService.previewOrder(anyString(), any(ShippingInfo.class), isNull())).thenReturn(preview);
 
@@ -105,8 +106,8 @@ class OrderControllerWebMvcTest {
                 OrderService.PAYMENT_METHOD_COD,
                 null,
                 BigDecimal.ZERO,
-                new BigDecimal("5.00")
-        );
+                new BigDecimal("5.00"),
+                null);
         when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
         when(orderService.previewOrder(anyString(), any(ShippingInfo.class), isNull())).thenReturn(preview);
 
@@ -145,8 +146,8 @@ class OrderControllerWebMvcTest {
                 OrderService.PAYMENT_METHOD_COD,
                 null,
                 BigDecimal.ZERO,
-                new BigDecimal("5.00")
-        );
+                new BigDecimal("5.00"),
+                null);
         when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
         when(orderService.placeOrder(anyString(), any(ShippingInfo.class), isNull())).thenReturn(placed);
 
@@ -199,8 +200,8 @@ class OrderControllerWebMvcTest {
                 OrderService.PAYMENT_METHOD_COD,
                 null,
                 BigDecimal.ZERO,
-                new BigDecimal("5.00")
-        );
+                new BigDecimal("5.00"),
+                null);
         when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
         when(addressService.get(PRINCIPAL.userId(), "addr-1")).thenReturn(saved);
         when(orderService.placeOrder(anyString(), any(ShippingInfo.class), isNull())).thenReturn(placed);
@@ -235,8 +236,8 @@ class OrderControllerWebMvcTest {
                 OrderService.PAYMENT_METHOD_COD,
                 null,
                 BigDecimal.ZERO,
-                new BigDecimal("5.00")
-        );
+                new BigDecimal("5.00"),
+                null);
         when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
         when(orderService.getOrder(PRINCIPAL.userId(), "ord-xyz")).thenReturn(order);
 
@@ -249,6 +250,34 @@ class OrderControllerWebMvcTest {
                 .andExpect(jsonPath("$.totalAmount").value(134.50));
 
         verify(orderService).getOrder(eq(PRINCIPAL.userId()), eq("ord-xyz"));
+    }
+
+    @Test
+    void cancelOrderShouldReturnCancelledStatus() throws Exception {
+        ShippingInfo shippingInfo = shippingInfo();
+        List<BasketItem> items = List.of(new BasketItem(product("p-1001", "24.99"), 1));
+        Order cancelled = new Order(
+                "ord-cancel",
+                OrderService.ORDER_STATUS_CANCELLED,
+                shippingInfo,
+                items,
+                new BigDecimal("29.99"),
+                OrderService.PAYMENT_METHOD_COD,
+                null,
+                BigDecimal.ZERO,
+                new BigDecimal("5.00"),
+                null
+        );
+        when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
+        when(orderService.cancelOrder(PRINCIPAL.userId(), "ord-cancel")).thenReturn(cancelled);
+
+        mockMvc.perform(post("/api/v1/orders/ord-cancel/cancel")
+                        .header("Authorization", "Bearer test"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orderId").value("ord-cancel"))
+                .andExpect(jsonPath("$.status").value(OrderService.ORDER_STATUS_CANCELLED));
+
+        verify(orderService).cancelOrder(eq(PRINCIPAL.userId()), eq("ord-cancel"));
     }
 
     private static Product product(String id, String price) {

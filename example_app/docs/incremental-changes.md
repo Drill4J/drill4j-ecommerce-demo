@@ -114,7 +114,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** [10) Cancel a placed COD order](user-flows.md#10-cancel-a-placed-cod-order)
 - **Touches:** backend, frontend
-- **Status:** planned
+- **Status:** feature+unit+api done
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|

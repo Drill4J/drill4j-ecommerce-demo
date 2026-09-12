@@ -1,6 +1,7 @@
 package com.example.ecommerce.domain;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 
 public record Order(
@@ -12,6 +13,7 @@ public record Order(
         String paymentMethod,
         String promoCode,
         BigDecimal discountAmount,
-        BigDecimal deliveryFee
+        BigDecimal deliveryFee,
+        Instant placedAt
 ) {
 }

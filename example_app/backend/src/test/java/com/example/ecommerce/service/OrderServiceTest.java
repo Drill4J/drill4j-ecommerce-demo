@@ -112,6 +112,21 @@ class OrderServiceTest {
                 .hasMessage("Order not found: missing-order");
     }
 
+    @Test
+    void cancelOrderShouldChangePlacedCodToCancelled() {
+        ShippingInfo shippingInfo = shippingInfo();
+        List<BasketItem> items = List.of(new BasketItem(product("p-1001", "24.99", true), 1));
+        when(basketService.snapshotItems(USER_ID)).thenReturn(items);
+        when(basketService.calculateSubtotal(USER_ID)).thenReturn(new BigDecimal("24.99"));
+
+        Order placed = orderService.placeOrder(USER_ID, shippingInfo);
+        Order cancelled = orderService.cancelOrder(USER_ID, placed.id());
+
+        assertThat(cancelled.status()).isEqualTo(OrderService.ORDER_STATUS_CANCELLED);
+        assertThat(orderService.getOrder(USER_ID, placed.id()).status())
+                .isEqualTo(OrderService.ORDER_STATUS_CANCELLED);
+    }
+
     private static Product product(String id, String price) {
         return product(id, price, true);
     }

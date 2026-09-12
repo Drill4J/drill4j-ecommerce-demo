@@ -101,6 +101,14 @@ public class OrderController {
         return toOrderResponse(orderService.getOrder(principal.userId(), orderId));
     }
 
+    @PostMapping("/orders/{orderId}/cancel")
+    public OrderResponse cancelOrder(
+            @RequestAttribute(AuthRequestAttributes.PRINCIPAL) AuthPrincipal principal,
+            @PathVariable String orderId
+    ) {
+        return toOrderResponse(orderService.cancelOrder(principal.userId(), orderId));
+    }
+
     private ShippingInfo resolveShipping(String userId, String addressId, ShippingInfoRequest shippingInfo) {
         if (addressId != null && !addressId.isBlank()) {
             SavedAddress saved = addressService.get(userId, addressId);

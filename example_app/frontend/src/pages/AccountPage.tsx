@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { createAddress, getAddresses, getOrders } from '../api'
+import { cancelOrder, createAddress, getAddresses, getOrders } from '../api'
 import { useAuth } from '../context/AuthContext'
 import type { Order, SavedAddress, ShippingInfo } from '../types'
 import { formatCurrency } from '../utils'
@@ -21,9 +21,11 @@ export function AccountPage() {
   const [saveAsDefault, setSaveAsDefault] = useState(false)
   const [loading, setLoading] = useState(true)
   const [savingAddress, setSavingAddress] = useState(false)
+  const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [addressError, setAddressError] = useState('')
   const [addressMessage, setAddressMessage] = useState('')
+  const [orderMessage, setOrderMessage] = useState('')
 
   useEffect(() => {
     setLoading(true)
@@ -61,6 +63,24 @@ export function AccountPage() {
       setAddressError(message)
     } finally {
       setSavingAddress(false)
+    }
+  }
+
+  const handleCancelOrder = async (orderId: string) => {
+    setOrderMessage('')
+    setError('')
+    setCancellingOrderId(orderId)
+    try {
+      const cancelled = await cancelOrder(orderId)
+      setOrders((current) =>
+        current.map((order) => (order.orderId === cancelled.orderId ? cancelled : order)),
+      )
+      setOrderMessage(`Order ${cancelled.orderId} cancelled.`)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to cancel order'
+      setError(message)
+    } finally {
+      setCancellingOrderId(null)
     }
   }
 
@@ -158,6 +178,7 @@ export function AccountPage() {
       </form>
 
       <h2>Your orders</h2>
+      {orderMessage && <p className="muted">{orderMessage}</p>}
       {loading ? (
         <p>Loading orders...</p>
       ) : error ? (
@@ -184,6 +205,16 @@ export function AccountPage() {
                 <Link className="button secondary" to={`/checkout/success/${order.orderId}`}>
                   View
                 </Link>
+                {order.status === 'PLACED_COD' && (
+                  <button
+                    className="button secondary"
+                    type="button"
+                    disabled={cancellingOrderId === order.orderId}
+                    onClick={() => void handleCancelOrder(order.orderId)}
+                  >
+                    {cancellingOrderId === order.orderId ? 'Cancelling...' : 'Cancel order'}
+                  </button>
+                )}
               </div>
             </div>
           ))}

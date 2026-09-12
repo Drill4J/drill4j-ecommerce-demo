@@ -81,7 +81,7 @@ export function AccountPage() {
     try {
       await changePassword(currentPassword, newPassword)
       signOut()
-      navigate('/signin', { replace: true })
+      navigate('/signin', { replace: true, state: { from: '/products' } })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to change password'
       setPasswordError(message)

@@ -150,7 +150,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** [13) Change account password](user-flows.md#13-change-account-password)
 - **Touches:** auth, frontend
-- **Status:** feature+unit+api done
+- **Status:** done
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|

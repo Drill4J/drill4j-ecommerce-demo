@@ -26,5 +26,13 @@ test.describe('Home & navigation', () => {
     await expect(page).toHaveURL(/\/signin$/);
     await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
   });
+
+  test('C13 Home featured section loads from featured API', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'Featured products' })).toBeVisible();
+    const featuredCards = page.locator('article.product-card');
+    await expect(featuredCards).toHaveCount(8);
+    await expect(featuredCards.first()).toBeVisible();
+  });
 });
 

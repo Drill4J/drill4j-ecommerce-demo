@@ -46,5 +46,12 @@ test.describe('Authentication', () => {
     await page.getByRole('button', { name: 'Sign in' }).click();
     await expect(page.getByRole('link', { name: new RegExp(user.email) })).toBeVisible();
   });
+
+  test('C11 Signup with valid credentials under new rules', async ({ page }, testInfo) => {
+    const user = createUniqueUser(testInfo);
+    await signUp(page, user);
+    await expect(page).toHaveURL(/\/products$/);
+    await expect(page.getByRole('link', { name: new RegExp(user.email) })).toBeVisible();
+  });
 });
 

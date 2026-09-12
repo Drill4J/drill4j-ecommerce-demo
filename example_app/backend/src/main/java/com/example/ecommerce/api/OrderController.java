@@ -5,11 +5,13 @@ import com.example.ecommerce.api.model.CheckoutPreviewRequest;
 import com.example.ecommerce.api.model.CheckoutPreviewResponse;
 import com.example.ecommerce.api.model.OrderResponse;
 import com.example.ecommerce.api.model.PlaceOrderRequest;
+import com.example.ecommerce.api.model.ReorderResponse;
 import com.example.ecommerce.api.model.ShippingInfoRequest;
 import com.example.ecommerce.auth.AuthPrincipal;
 import com.example.ecommerce.auth.AuthRequestAttributes;
 import com.example.ecommerce.domain.BasketItem;
 import com.example.ecommerce.domain.Order;
+import com.example.ecommerce.domain.ReorderResult;
 import com.example.ecommerce.domain.SavedAddress;
 import com.example.ecommerce.domain.ShippingInfo;
 import com.example.ecommerce.service.AddressService;
@@ -107,6 +109,20 @@ public class OrderController {
             @PathVariable String orderId
     ) {
         return toOrderResponse(orderService.cancelOrder(principal.userId(), orderId));
+    }
+
+    @PostMapping("/orders/{orderId}/reorder")
+    public ReorderResponse reorderOrder(
+            @RequestAttribute(AuthRequestAttributes.PRINCIPAL) AuthPrincipal principal,
+            @PathVariable String orderId
+    ) {
+        ReorderResult result = orderService.reorder(principal.userId(), orderId);
+        return new ReorderResponse(
+                toBasketItemResponses(result.items()),
+                result.totalItems(),
+                result.subtotal(),
+                result.skippedProductIds()
+        );
     }
 
     private ShippingInfo resolveShipping(String userId, String addressId, ShippingInfoRequest shippingInfo) {

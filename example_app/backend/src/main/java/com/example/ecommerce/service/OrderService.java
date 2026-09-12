@@ -3,6 +3,8 @@ package com.example.ecommerce.service;
 import com.example.ecommerce.domain.AppliedPromo;
 import com.example.ecommerce.domain.BasketItem;
 import com.example.ecommerce.domain.Order;
+import com.example.ecommerce.domain.Product;
+import com.example.ecommerce.domain.ReorderResult;
 import com.example.ecommerce.domain.ShippingInfo;
 import com.example.ecommerce.web.BadRequestException;
 import com.example.ecommerce.web.NotFoundException;
@@ -13,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,7 @@ public class OrderService {
     private final BasketService basketService;
     private final PromoService promoService;
     private final DeliveryFeeService deliveryFeeService;
+    private final ProductService productService;
     private final Clock clock;
     private final ConcurrentHashMap<String, Map<String, Order>> ordersByUserId = new ConcurrentHashMap<>();
 
@@ -38,20 +42,23 @@ public class OrderService {
     public OrderService(
             BasketService basketService,
             PromoService promoService,
-            DeliveryFeeService deliveryFeeService
+            DeliveryFeeService deliveryFeeService,
+            ProductService productService
     ) {
-        this(basketService, promoService, deliveryFeeService, Clock.systemUTC());
+        this(basketService, promoService, deliveryFeeService, productService, Clock.systemUTC());
     }
 
     OrderService(
             BasketService basketService,
             PromoService promoService,
             DeliveryFeeService deliveryFeeService,
+            ProductService productService,
             Clock clock
     ) {
         this.basketService = basketService;
         this.promoService = promoService;
         this.deliveryFeeService = deliveryFeeService;
+        this.productService = productService;
         this.clock = clock;
     }
 
@@ -137,6 +144,36 @@ public class OrderService {
         );
         getOrCreateUserOrders(userId).put(orderId, cancelled);
         return cancelled;
+    }
+
+    public ReorderResult reorder(String userId, String orderId) {
+        Order order = getOrder(userId, orderId);
+        List<String> skippedProductIds = new ArrayList<>();
+        List<BasketItem> inStockLines = new ArrayList<>();
+
+        for (BasketItem line : order.items()) {
+            Product product = productService.getProductById(line.product().id());
+            if (!product.inStock()) {
+                skippedProductIds.add(product.id());
+            } else {
+                inStockLines.add(new BasketItem(product, line.quantity()));
+            }
+        }
+
+        if (inStockLines.isEmpty()) {
+            throw new BadRequestException("No items available to reorder from order: " + orderId);
+        }
+
+        for (BasketItem line : inStockLines) {
+            basketService.addItem(userId, line.product().id(), line.quantity());
+        }
+
+        return new ReorderResult(
+                basketService.snapshotItems(userId),
+                basketService.totalItems(userId),
+                basketService.calculateSubtotal(userId),
+                List.copyOf(skippedProductIds)
+        );
     }
 
     public Order getOrder(String userId, String orderId) {

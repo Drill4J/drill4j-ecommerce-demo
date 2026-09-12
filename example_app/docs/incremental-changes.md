@@ -126,7 +126,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** [11) Reorder from order history](user-flows.md#11-reorder-from-order-history)
 - **Touches:** backend, frontend
-- **Status:** planned
+- **Status:** feature+unit+api done
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|

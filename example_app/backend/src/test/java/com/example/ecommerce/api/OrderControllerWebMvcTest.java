@@ -5,6 +5,7 @@ import com.example.ecommerce.auth.AuthPrincipal;
 import com.example.ecommerce.domain.BasketItem;
 import com.example.ecommerce.domain.Order;
 import com.example.ecommerce.domain.Product;
+import com.example.ecommerce.domain.ReorderResult;
 import com.example.ecommerce.domain.SavedAddress;
 import com.example.ecommerce.domain.ShippingInfo;
 import com.example.ecommerce.service.AddressService;
@@ -278,6 +279,35 @@ class OrderControllerWebMvcTest {
                 .andExpect(jsonPath("$.status").value(OrderService.ORDER_STATUS_CANCELLED));
 
         verify(orderService).cancelOrder(eq(PRINCIPAL.userId()), eq("ord-cancel"));
+    }
+
+    @Test
+    void reorderOrderShouldReturnBasketWithLines() throws Exception {
+        List<BasketItem> items = List.of(
+                new BasketItem(product("p-1001", "24.99"), 1),
+                new BasketItem(product("p-1002", "79.00"), 2)
+        );
+        ReorderResult result = new ReorderResult(
+                items,
+                3,
+                new BigDecimal("182.99"),
+                List.of()
+        );
+        when(authClient.verify(anyString())).thenReturn(PRINCIPAL);
+        when(orderService.reorder(PRINCIPAL.userId(), "ord-reorder")).thenReturn(result);
+
+        mockMvc.perform(post("/api/v1/orders/ord-reorder/reorder")
+                        .header("Authorization", "Bearer test"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].productId").value("p-1001"))
+                .andExpect(jsonPath("$.items[0].quantity").value(1))
+                .andExpect(jsonPath("$.items[1].productId").value("p-1002"))
+                .andExpect(jsonPath("$.items[1].quantity").value(2))
+                .andExpect(jsonPath("$.totalItems").value(3))
+                .andExpect(jsonPath("$.subtotal").value(182.99))
+                .andExpect(jsonPath("$.skippedProductIds").isEmpty());
+
+        verify(orderService).reorder(eq(PRINCIPAL.userId()), eq("ord-reorder"));
     }
 
     private static Product product(String id, String price) {

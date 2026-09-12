@@ -1,7 +1,8 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { cancelOrder, createAddress, getAddresses, getOrders } from '../api'
+import { cancelOrder, createAddress, getAddresses, getOrders, reorderOrder } from '../api'
 import { useAuth } from '../context/AuthContext'
+import { useBasket } from '../context/BasketContext'
 import type { Order, SavedAddress, ShippingInfo } from '../types'
 import { formatCurrency } from '../utils'
 
@@ -15,6 +16,7 @@ const emptyAddress: ShippingInfo = {
 
 export function AccountPage() {
   const { user } = useAuth()
+  const { refreshBasket } = useBasket()
   const [orders, setOrders] = useState<Order[]>([])
   const [addresses, setAddresses] = useState<SavedAddress[]>([])
   const [newAddress, setNewAddress] = useState<ShippingInfo>(emptyAddress)
@@ -22,6 +24,7 @@ export function AccountPage() {
   const [loading, setLoading] = useState(true)
   const [savingAddress, setSavingAddress] = useState(false)
   const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null)
+  const [reorderingOrderId, setReorderingOrderId] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [addressError, setAddressError] = useState('')
   const [addressMessage, setAddressMessage] = useState('')
@@ -81,6 +84,27 @@ export function AccountPage() {
       setError(message)
     } finally {
       setCancellingOrderId(null)
+    }
+  }
+
+  const handleReorder = async (orderId: string) => {
+    setOrderMessage('')
+    setError('')
+    setReorderingOrderId(orderId)
+    try {
+      const result = await reorderOrder(orderId)
+      await refreshBasket()
+      const skipped = result.skippedProductIds?.length ?? 0
+      setOrderMessage(
+        skipped > 0
+          ? `Reordered into basket (${result.totalItems} items). Skipped ${skipped} out-of-stock item(s).`
+          : `Reordered into basket (${result.totalItems} items).`,
+      )
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to reorder'
+      setError(message)
+    } finally {
+      setReorderingOrderId(null)
     }
   }
 
@@ -205,6 +229,14 @@ export function AccountPage() {
                 <Link className="button secondary" to={`/checkout/success/${order.orderId}`}>
                   View
                 </Link>
+                <button
+                  className="button secondary"
+                  type="button"
+                  disabled={reorderingOrderId === order.orderId}
+                  onClick={() => void handleReorder(order.orderId)}
+                >
+                  {reorderingOrderId === order.orderId ? 'Reordering...' : 'Reorder'}
+                </button>
                 {order.status === 'PLACED_COD' && (
                   <button
                     className="button secondary"

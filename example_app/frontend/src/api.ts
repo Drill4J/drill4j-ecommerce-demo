@@ -1,4 +1,4 @@
-import type {Basket, CheckoutPreview, Order, PageParams, Product, SavedAddress, ShippingInfo} from './types'
+import type {Basket, CheckoutPreview, Order, PageParams, Product, ReorderResult, SavedAddress, ShippingInfo} from './types'
 import { getCookie } from './auth/cookies'
 
 // In production (nginx), the UI must call same-origin:
@@ -172,6 +172,13 @@ export function getOrders(): Promise<Order[]> {
 
 export function cancelOrder(orderId: string): Promise<Order> {
   return fetchJson<Order>(`/orders/${orderId}/cancel`, {
+    method: 'POST',
+    includeAuth: true,
+  })
+}
+
+export function reorderOrder(orderId: string): Promise<ReorderResult> {
+  return fetchJson<ReorderResult>(`/orders/${orderId}/reorder`, {
     method: 'POST',
     includeAuth: true,
   })

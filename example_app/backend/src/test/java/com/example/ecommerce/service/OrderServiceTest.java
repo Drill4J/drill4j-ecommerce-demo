@@ -3,6 +3,7 @@ package com.example.ecommerce.service;
 import com.example.ecommerce.domain.BasketItem;
 import com.example.ecommerce.domain.Order;
 import com.example.ecommerce.domain.Product;
+import com.example.ecommerce.domain.ReorderResult;
 import com.example.ecommerce.domain.ShippingInfo;
 import com.example.ecommerce.web.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,12 +25,19 @@ class OrderServiceTest {
     private static final String USER_ID = "u-1";
 
     private BasketService basketService;
+    private ProductService productService;
     private OrderService orderService;
 
     @BeforeEach
     void setUp() {
         basketService = mock(BasketService.class);
-        orderService = new OrderService(basketService, new PromoService(), new DeliveryFeeService());
+        productService = mock(ProductService.class);
+        orderService = new OrderService(
+                basketService,
+                new PromoService(),
+                new DeliveryFeeService(),
+                productService
+        );
     }
 
     @Test
@@ -125,6 +133,40 @@ class OrderServiceTest {
         assertThat(cancelled.status()).isEqualTo(OrderService.ORDER_STATUS_CANCELLED);
         assertThat(orderService.getOrder(USER_ID, placed.id()).status())
                 .isEqualTo(OrderService.ORDER_STATUS_CANCELLED);
+    }
+
+    @Test
+    void reorderShouldAddAllInStockLinesToBasket() {
+        ShippingInfo shippingInfo = shippingInfo();
+        Product mouse = product("p-1001", "24.99", true);
+        Product keyboard = product("p-1002", "79.00", true);
+        List<BasketItem> orderItems = List.of(
+                new BasketItem(mouse, 1),
+                new BasketItem(keyboard, 2)
+        );
+        when(basketService.snapshotItems(USER_ID)).thenReturn(orderItems);
+        when(basketService.calculateSubtotal(USER_ID)).thenReturn(new BigDecimal("182.99"));
+
+        Order placed = orderService.placeOrder(USER_ID, shippingInfo);
+
+        when(productService.getProductById("p-1001")).thenReturn(mouse);
+        when(productService.getProductById("p-1002")).thenReturn(keyboard);
+        List<BasketItem> basketAfterReorder = List.of(
+                new BasketItem(mouse, 1),
+                new BasketItem(keyboard, 2)
+        );
+        when(basketService.snapshotItems(USER_ID)).thenReturn(basketAfterReorder);
+        when(basketService.totalItems(USER_ID)).thenReturn(3);
+        when(basketService.calculateSubtotal(USER_ID)).thenReturn(new BigDecimal("182.99"));
+
+        ReorderResult result = orderService.reorder(USER_ID, placed.id());
+
+        verify(basketService).addItem(USER_ID, "p-1001", 1);
+        verify(basketService).addItem(USER_ID, "p-1002", 2);
+        assertThat(result.skippedProductIds()).isEmpty();
+        assertThat(result.totalItems()).isEqualTo(3);
+        assertThat(result.subtotal()).isEqualByComparingTo("182.99");
+        assertThat(result.items()).containsExactlyElementsOf(basketAfterReorder);
     }
 
     private static Product product(String id, String price) {

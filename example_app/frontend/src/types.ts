@@ -29,6 +29,10 @@ export type Basket = {
   subtotal: number
 }
 
+export type ReorderResult = Basket & {
+  skippedProductIds: string[]
+}
+
 export type ShippingInfo = {
   fullName: string
   phoneNumber: string

@@ -28,6 +28,7 @@ public class AuthService {
         if (password == null || password.isBlank()) {
             throw new BadRequestException("Password is required");
         }
+        PasswordPolicy.validate(password);
         if (userStore.existsByEmail(normalizedEmail)) {
             throw new ConflictException("User with this email is already registered");
         }

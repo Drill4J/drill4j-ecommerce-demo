@@ -162,7 +162,7 @@ For each track, **Cover** is what that layer should assert; **Gap** is left unte
 
 - **User flow:** Related to [13) Change account password](user-flows.md#13-change-account-password) (shared auth policy)
 - **Touches:** auth
-- **Status:** planned
+- **Status:** feature+unit+api done
 
 | Layer | Target | Cover | Gap |
 |-------|--------|-------|-----|

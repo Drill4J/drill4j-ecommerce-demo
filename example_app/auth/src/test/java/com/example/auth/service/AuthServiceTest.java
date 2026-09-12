@@ -25,7 +25,7 @@ class AuthServiceTest {
 
     @Test
     void signUpShouldReturnTokenForNewUser() {
-        AuthService.AuthResult result = authService.signUp(" boiLerplate@example.com ", "pass1234");
+        AuthService.AuthResult result = authService.signUp(" boiLerplate@example.com ", "P@ssw0rd_123!");
 
         assertThat(result.email()).isEqualTo("boilerplate@example.com");
         assertThat(result.userId()).isNotBlank();
@@ -33,13 +33,22 @@ class AuthServiceTest {
     }
 
     @Test
+    void signUpShouldSucceedWithValidEmailAndPasswordUnderPolicy() {
+        AuthService.AuthResult result = authService.signUp(" c11-Unit@example.com ", "P@ssw0rd_123!");
+
+        assertThat(result.email()).isEqualTo("c11-unit@example.com");
+        assertThat(result.userId()).isNotBlank();
+        assertThat(result.token()).isNotBlank();
+    }
+
+    @Test
     void changePasswordShouldSucceedWithValidCurrentPassword() {
-        AuthService.AuthResult signedUp = authService.signUp("c10-unit@example.com", "old-password");
+        AuthService.AuthResult signedUp = authService.signUp("c10-unit@example.com", "Old_Pass1!");
 
         authService.changePassword(
                 signedUp.userId(),
                 signedUp.email(),
-                "old-password",
+                "Old_Pass1!",
                 "P@ssw0rd_123!"
         );
 

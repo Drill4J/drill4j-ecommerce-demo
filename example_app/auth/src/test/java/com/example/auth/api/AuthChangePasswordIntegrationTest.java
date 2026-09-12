@@ -28,7 +28,7 @@ class AuthChangePasswordIntegrationTest {
     @Test
     void changePasswordShouldReturn200AndAllowSignInWithNewPassword() throws Exception {
         String email = "c10-api@example.com";
-        String currentPassword = "old-password";
+        String currentPassword = "Old_Pass1!";
         String newPassword = "P@ssw0rd_123!";
 
         mockMvc.perform(post("/api/v1/auth/signup")

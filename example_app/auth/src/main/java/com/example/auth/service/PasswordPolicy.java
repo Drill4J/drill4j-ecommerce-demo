@@ -3,7 +3,7 @@ package com.example.auth.service;
 import com.example.auth.web.BadRequestException;
 
 /**
- * Password rules for change-password (C10) and later signup (C11).
+ * Password rules for signup (C11) and change-password (C10).
  * Accepts passwords such as {@code P@ssw0rd_123!}.
  */
 public final class PasswordPolicy {

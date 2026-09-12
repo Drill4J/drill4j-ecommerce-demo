@@ -33,8 +33,8 @@ class AuthControllerWebMvcTest {
     private JwtService jwtService;
 
     @Test
-    void signUpShouldReturnCreatedAndAuthPayload() throws Exception {
-        when(authService.signUp(eq("user@example.com"), eq("pass1234")))
+    void signUpShouldReturnCreatedForValidPayload() throws Exception {
+        when(authService.signUp(eq("user@example.com"), eq("P@ssw0rd_123!")))
                 .thenReturn(new AuthService.AuthResult("u-1", "user@example.com", "jwt-token"));
 
         mockMvc.perform(post("/api/v1/auth/signup")
@@ -42,7 +42,7 @@ class AuthControllerWebMvcTest {
                         .content("""
                                 {
                                   "email": "user@example.com",
-                                  "password": "pass1234"
+                                  "password": "P@ssw0rd_123!"
                                 }
                                 """))
                 .andExpect(status().isCreated())

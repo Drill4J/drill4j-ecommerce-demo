@@ -244,4 +244,24 @@ test.describe('Checkout, account, and access rules', () => {
     await expect(page.locator('.order-loading-overlay')).toBeHidden({ timeout: PROCESSING_ORDER_MAX_TIMEOUT });
     await expect(page.getByRole('heading', { name: 'Order confirmed' })).toBeVisible();
   });
+
+  test('C7 Place COD order then cancel from Account', async ({ page }, testInfo) => {
+    const user = createUniqueUser(testInfo);
+    await signUp(page, user);
+    await placeOrderViaUi(page, {
+      fullName: 'C7 Cancel Buyer',
+      phoneNumber: '+1-555-700-700',
+      addressLine: 'Cancel St 7',
+      city: 'Austin',
+      postalCode: '73301',
+    });
+
+    await page.getByRole('link', { name: new RegExp(user.email) }).click();
+    await expect(page.getByRole('heading', { name: 'Your orders' })).toBeVisible();
+    await expect(page.getByText(/PLACED_COD/)).toBeVisible();
+    await page.getByRole('button', { name: 'Cancel order' }).click();
+    await expect(page.getByText(/Order .+ cancelled\./)).toBeVisible();
+    await expect(page.getByText(/CANCELLED ·/)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Cancel order' })).toHaveCount(0);
+  });
 });
